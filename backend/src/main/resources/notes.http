@@ -1,0 +1,18 @@
+###
+GET http://localhost:8080/api/dances
+
+###
+POST http://localhost:8080/api/dances
+Content-Type: application/json
+
+{
+  "name": "Sevillanas",
+  "region": "Andalucia",
+  "description": "Baile tradicional andaluz"
+}
+
+###
+DELETE http://localhost:8080/api/dances/1
+
+###
+DELETE http://localhost:8080/api/dances/all
