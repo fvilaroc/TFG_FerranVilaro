@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "user_TFG",
@@ -28,6 +29,9 @@ public class User {
     private int points = 0; // Puntos acumulados por el usuario
     private LocalDate lastLogin; // Fecha del último inicio de sesión del usuario
     private int streak = 0; // Racha de días consecutivos de inicio de sesión
+
+    @OneToMany(mappedBy = "user")
+    private List<UserDanceProgress> progresses;
 
     public User() {}
 
