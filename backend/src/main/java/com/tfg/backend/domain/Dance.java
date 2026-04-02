@@ -21,14 +21,11 @@ public class Dance {
     @Column(length = 2000)
     private String description;
 
-    private String videoURL;
-
     public Dance() {}
 
-    public Dance(String name, String region, String description, String videoURL) {
+    public Dance(String name, String region, String description) {
         this.name = name;
         this.region = region;
         this.description = description;
-        this.videoURL = videoURL;
     }
 }
