@@ -16,3 +16,23 @@ DELETE http://localhost:8080/api/dances/1
 
 ###
 DELETE http://localhost:8080/api/dances/all
+
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user2",
+  "password": "password123"
+}
+
+###
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "defr",
+  "username": "user2",
+  "password": "password123",
+  "dateOfBirth": "2004-11-29"
+}

@@ -6,7 +6,9 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "dances")
+@Table(name = "dances",
+        uniqueConstraints =
+            @UniqueConstraint(columnNames = "name"))
 @Getter
 @Setter
 public class Dance {
