@@ -2,10 +2,10 @@ package com.tfg.backend.service;
 
 import com.tfg.backend.domain.User;
 import com.tfg.backend.persistance.UserRepository;
+import com.tfg.backend.service.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -16,17 +16,33 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getCurrentUser(String username) {
-        return userRepository.findByUsername(username).
+    public UserDTO getCurrentUser(String username) {
+        User user = userRepository.findByUsername(username).
                 orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        return toDTO(user);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id).
                 orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        return toDTO(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream().map(this::toDTO).toList();
+    }
+
+    private UserDTO toDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getPoints(),
+                user.getStreak()
+        );
     }
 }
