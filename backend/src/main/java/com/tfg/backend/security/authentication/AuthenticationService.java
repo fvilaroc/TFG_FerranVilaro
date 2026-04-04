@@ -2,6 +2,7 @@ package com.tfg.backend.security.authentication;
 
 import com.tfg.backend.domain.User;
 import com.tfg.backend.persistance.UserRepository;
+import com.tfg.backend.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,12 +27,14 @@ public class AuthenticationService {
     private final JwtEncoder jwtEncoder;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
-    public AuthenticationService(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder, UserRepository userRepository, PasswordEncoder passwordEncoder, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtEncoder = jwtEncoder;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -41,6 +44,11 @@ public class AuthenticationService {
                         request.password()
                 )
         );
+
+        User user = userRepository.findByUsername(request.username())
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + request.username()));
+
+        userService.updateLoginStreak(user);
 
         var jwtToken = generateToken(authentication);
         AuthenticationResponse response = new AuthenticationResponse();
@@ -68,7 +76,7 @@ public class AuthenticationService {
         user.setDateOfBirth(dateOfBirth);
         user.setRegistrationDate(LocalDate.now());
         user.setPoints(0);
-        user.setLastLogin(LocalDate.now());
+        user.setLastLogin(null);
         user.setStreak(0);
 
         userRepository.save(user);

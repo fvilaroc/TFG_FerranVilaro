@@ -5,6 +5,7 @@ import com.tfg.backend.persistance.UserRepository;
 import com.tfg.backend.service.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -34,6 +35,25 @@ public class UserService {
         List<User> users = userRepository.findAll();
 
         return users.stream().map(this::toDTO).toList();
+    }
+
+    public void updateLoginStreak(User user) {
+        LocalDate today = LocalDate.now();
+
+        if (user.getLastLogin() == null) {
+            user.setLastLogin(today);
+            user.setStreak(1);
+        } else if (user.getLastLogin().equals(today)) {
+            return;
+        } else if (user.getLastLogin().equals(today.minusDays(1))) {
+            user.setStreak(user.getStreak() + 1);
+            user.setLastLogin(today);
+        } else {
+            user.setStreak(1);
+            user.setLastLogin(today);
+        }
+
+        userRepository.save(user);
     }
 
     private UserDTO toDTO(User user) {
