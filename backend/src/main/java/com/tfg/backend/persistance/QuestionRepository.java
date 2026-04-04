@@ -13,5 +13,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByDanceIdAndDifficulty(Long danceId, Difficulty difficulty);
 
-    Optional<Question> findByQuestionId(Long questionId);
+    Optional<Question> findById(Long questionId);
 }

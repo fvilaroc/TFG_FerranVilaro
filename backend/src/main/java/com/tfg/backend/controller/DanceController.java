@@ -2,6 +2,7 @@ package com.tfg.backend.controller;
 
 import com.tfg.backend.domain.Dance;
 import com.tfg.backend.service.DanceService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,23 +17,15 @@ public class DanceController {
         this.danceService = danceService;
     }
 
-    @GetMapping
-    public List<Dance> getAllDances() {
-        return danceService.findAll();
-    }
-
     @PostMapping
-    public Dance createDance(@RequestBody Dance dance) {
-        return danceService.save(dance);
+    public ResponseEntity<?> createDance(@RequestBody Dance dance) {
+        danceService.saveDance(dance);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDance(@PathVariable Long id) {
-        danceService.deleteById(id);
-    }
-
-    @DeleteMapping("/all")
-    public void deleteAll() {
-        danceService.deleteAll();
+    public ResponseEntity<?> deleteDance(@PathVariable Long id) {
+        danceService.deleteDanceById(id);
+        return ResponseEntity.ok().build();
     }
 }

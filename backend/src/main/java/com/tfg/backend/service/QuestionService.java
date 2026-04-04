@@ -35,7 +35,7 @@ public class QuestionService {
     }
 
     public int checkAnswer(Long questionId, String answer) {
-        Question q = questionRepository.findByQuestionId(questionId)
+        Question q = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
         if(q.getCorrectAnswer().equalsIgnoreCase(answer)) {
