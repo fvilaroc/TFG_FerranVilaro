@@ -14,7 +14,7 @@ public class DanceDTO {
     private String videoUrl;
 
     public DanceDTO() {}
-    
+
     public DanceDTO(Long id, String name, String region, String description, String videoUrl) {
         this.id = id;
         this.name = name;
