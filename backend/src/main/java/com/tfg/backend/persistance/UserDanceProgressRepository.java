@@ -11,4 +11,6 @@ public interface UserDanceProgressRepository extends JpaRepository<UserDanceProg
     Optional<UserDanceProgress> findByUserIdAndDanceId(Long userId, Long danceId);
 
     List<UserDanceProgress> findAllByUserId(Long userId);
+
+    List<UserDanceProgress> findByDanceIdOrderByPointsDesc(Long danceId);
 }
