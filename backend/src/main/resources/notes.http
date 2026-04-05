@@ -33,3 +33,318 @@ Content-Type: application/json
   "password": "password123",
   "dateOfBirth": "2004-11-29"
 }
+
+
+
+
+
+
+### TEST
+
+### 1) Health check (opcional: comprobar que la app está levantada)
+GET http://localhost:8080/api/health
+
+### 2) Registrar un usuario nuevo
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "ferran@example.com",
+  "username": "ferran",
+  "password": "password123",
+  "dateOfBirth": "2004-11-29"
+}
+
+### 3) Hacer login con el usuario registrado
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "ferran",
+  "password": "password123"
+}
+
+### 4) Copia manualmente el token del login y pégalo aquí
+@token = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiZmVycmFuIiwiZXhwIjoxNzc1NDMzMTQ3LCJpYXQiOjE3NzUzOTcxNDcsInNjb3BlIjoiIn0.Sonivv7GhHJ_DF7hYl1NbDh0wbvAsVKpNuuH05qTH2yxM4dpWUUI8r3BSI4HJVZacO4z8C4o70YnNQ9LMiVbJg
+
+### 5) Obtener el usuario actual autenticado
+GET http://localhost:8080/api/users/currentUser
+Authorization: Bearer {{token}}
+
+### 6) Obtener todos los usuarios
+GET http://localhost:8080/api/users/all
+Authorization: Bearer {{token}}
+
+### 7) Obtener un usuario por ID
+GET http://localhost:8080/api/users/1
+Authorization: Bearer {{token}}
+
+### 8) Crear un baile
+POST http://localhost:8080/api/dances/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Sevillanas2",
+  "region": "Andalucía",
+  "description": "Baile tradicional andaluz muy popular en ferias y romerías.",
+  "videoUrl": "https://www.youtube.com/watch?v=ejemplo"
+}
+
+### 9) Crear un segundo baile
+POST http://localhost:8080/api/dances/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Sardana",
+  "region": "Cataluña",
+  "description": "Baile tradicional catalán que se baila en círculo.",
+  "videoUrl": "https://www.youtube.com/watch?v=ejemplo2"
+}
+
+### 10) Obtener todos los bailes
+GET http://localhost:8080/api/dances/all
+Authorization: Bearer {{token}}
+
+### 11) Obtener un baile por ID
+GET http://localhost:8080/api/dances/8
+Authorization: Bearer {{token}}
+
+### 12) Crear pregunta EASY para Sevillanas (danceId = 1)
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿De qué comunidad autónoma son típicas las sevillanas?",
+  "correctAnswer": "A",
+  "optionA": "Andalucía",
+  "optionB": "Galicia",
+  "optionC": "Cataluña",
+  "optionD": "Aragón",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 13) Crear segunda pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿En qué tipo de eventos suelen bailarse las sevillanas?",
+  "correctAnswer": "B",
+  "optionA": "Funerales",
+  "optionB": "Ferias y romerías",
+  "optionC": "Competiciones de natación",
+  "optionD": "Bibliotecas",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 14) Crear tercera pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Con cuántas personas se pueden bailar sevillanas?",
+  "correctAnswer": "C",
+  "optionA": "Solo una",
+  "optionB": "Solo tres",
+  "optionC": "Normalmente en pareja",
+  "optionD": "Solo cinco",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 15) Crear cuarta pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Cuál de estos elementos se asocia mucho al baile de sevillanas?",
+  "correctAnswer": "D",
+  "optionA": "Esquís",
+  "optionB": "Casco de moto",
+  "optionC": "Raqueta",
+  "optionD": "Traje de flamenca",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 16) Crear quinta pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Qué se suele seguir al bailar sevillanas?",
+  "correctAnswer": "A",
+  "optionA": "Un ritmo musical marcado",
+  "optionB": "Un semáforo",
+  "optionC": "Las olas del mar",
+  "optionD": "El silencio",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 17) Crear sexta pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Las sevillanas son un baile tradicional español?",
+  "correctAnswer": "B",
+  "optionA": "No",
+  "optionB": "Sí",
+  "optionC": "Solo a veces",
+  "optionD": "Solo en verano",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 18) Crear séptima pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Qué parte cultural reflejan mucho las sevillanas?",
+  "correctAnswer": "C",
+  "optionA": "La cultura japonesa",
+  "optionB": "La cultura vikinga",
+  "optionC": "La cultura andaluza",
+  "optionD": "La cultura inuit",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 19) Crear octava pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Las sevillanas suelen tener pasos coordinados?",
+  "correctAnswer": "D",
+  "optionA": "Nunca",
+  "optionB": "Solo si llueve",
+  "optionC": "Solo en Navidad",
+  "optionD": "Sí",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 20) Crear novena pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Qué instrumento o acompañamiento es habitual en sevillanas?",
+  "correctAnswer": "A",
+  "optionA": "Música flamenca",
+  "optionB": "Sirenas de ambulancia",
+  "optionC": "Ruido de tráfico",
+  "optionD": "Silbatos de árbitro",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 21) Crear décima pregunta EASY para Sevillanas
+POST http://localhost:8080/api/questions/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "question": "¿Las sevillanas forman parte del folclore español?",
+  "correctAnswer": "B",
+  "optionA": "No",
+  "optionB": "Sí",
+  "optionC": "Solo en América",
+  "optionD": "Solo en Asia",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+### 22) Generar quiz para el baile con ID 1
+GET http://localhost:8080/api/questions/quiz/8
+Authorization: Bearer {{token}}
+
+### 23) Comprobar una respuesta correcta (ajusta questionId si hace falta)
+POST http://localhost:8080/api/questions/check
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "questionId": 1,
+  "answer": "A"
+}
+
+### 24) Comprobar una respuesta incorrecta (ajusta questionId si hace falta)
+POST http://localhost:8080/api/questions/check
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "questionId": 1,
+  "answer": "B"
+}
+
+### 25) Ver progreso del usuario autenticado en el baile con ID 1
+GET http://localhost:8080/api/progress/8
+Authorization: Bearer {{token}}
+
+### 26) Ver todo el progreso del usuario autenticado
+GET http://localhost:8080/api/progress/all
+Authorization: Bearer {{token}}
+
+### 27) Ver ranking global
+GET http://localhost:8080/api/ranking/global
+Authorization: Bearer {{token}}
+
+### 28) Ver ranking del baile con ID 1
+GET http://localhost:8080/api/ranking/dance/8
+Authorization: Bearer {{token}}
+
+### 29) Borrar una pregunta por ID (ajusta el ID antes de ejecutar)
+DELETE http://localhost:8080/api/questions/1
+Authorization: Bearer {{token}}
+
+### 30) Borrar un baile por ID (ajusta el ID antes de ejecutar)
+DELETE http://localhost:8080/api/dances/11
+Authorization: Bearer {{token}}
