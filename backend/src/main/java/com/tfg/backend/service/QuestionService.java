@@ -45,15 +45,22 @@ public class QuestionService {
         }
     }
 
+    public Long getDanceIdByQuestionId(Long questionId) {
+        Question q = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RuntimeException("Question not found"));
+
+        return q.getDance().getId();
+    }
+
     public Question saveQuestion(Question question) {
         return questionRepository.save(question);
     }
 
-    public void deleteQuestion(Question question) {
-        if(!questionRepository.existsById(question.getId())) {
+    public void deleteQuestion(Long questionId) {
+        if(!questionRepository.existsById(questionId)) {
             throw new RuntimeException("Question not found");
         }
-        questionRepository.deleteById(question.getId());
+        questionRepository.deleteById(questionId);
     }
 
     private QuestionDTO toDTO(Question question) {
