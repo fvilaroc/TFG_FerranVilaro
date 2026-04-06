@@ -21,8 +21,25 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
+  void _goToDances() {
+    setState(() {
+      _selectedIndex = 1;
+    });
+  }
+
+  void _goToRanking() {
+    setState(() {
+      _selectedIndex = 2;
+    });
+  }
+
   late final List<Widget> _screens = [
-    HomeScreen(username: widget.username),
+    HomeScreen(
+      username: widget.username,
+      token: widget.token,
+      onGoToDances: _goToDances,
+      onGoToRanking: _goToRanking,
+    ),
     DancesScreen(token: widget.token),
     RankingScreen(token: widget.token),
     ProfileScreen(username: widget.username, token: widget.token),

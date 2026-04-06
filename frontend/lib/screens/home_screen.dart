@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'quiz_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final String username;
+  final String token;
+  final VoidCallback onGoToDances;
+  final VoidCallback onGoToRanking;
 
-  const HomeScreen({super.key, required this.username});
+  const HomeScreen({
+    super.key,
+    required this.username,
+    required this.token,
+    required this.onGoToDances,
+    required this.onGoToRanking,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +35,47 @@ class HomeScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.all(16),
                 child: Text(
-                  'Esta es la primera versión funcional del TFG.\n\n'
-                  'Desde aquí ya puedes navegar por la app, iniciar sesión, registrarte, ver el ranking y dejar preparada toda la estructura para cuando hagas la migración de datos.',
+                  'Esta es la primera versión\n\n',
                   style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            const Card(
+
+            Card(
               child: ListTile(
-                leading: Icon(Icons.music_note),
-                title: Text('Bailes típicos de España'),
-                subtitle: Text('Pendiente de cargar desde base de datos'),
+                leading: const Icon(Icons.music_note),
+                title: const Text('Bailes típicos de España'),
+                subtitle: const Text('Ver el listado de bailes'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: onGoToDances,
               ),
             ),
-            const Card(
+
+            Card(
               child: ListTile(
-                leading: Icon(Icons.quiz),
-                title: Text('Modo test'),
-                subtitle: Text('Se podrá activar cuando existan preguntas en la base de datos'),
+                leading: const Icon(Icons.quiz),
+                title: const Text('Modo test'),
+                subtitle: const Text('Responder preguntas de un baile'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => QuizScreen(token: token),
+                    ),
+                  );
+                },
               ),
             ),
-            const Card(
+
+            Card(
               child: ListTile(
-                leading: Icon(Icons.emoji_events),
-                title: Text('Ranking'),
-                subtitle: Text('Conectado al backend'),
+                leading: const Icon(Icons.emoji_events),
+                title: const Text('Ranking'),
+                subtitle: const Text('Consultar clasificación global'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: onGoToRanking,
               ),
             ),
           ],
