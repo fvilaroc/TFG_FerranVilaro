@@ -9,7 +9,7 @@ class AuthService {
     required String password,
   }) async {
     final response = await http.post(
-      Uri.parse('${AppConfig.baseUrl}/login'),
+      Uri.parse('${AppConfig.baseUrl}/api/auth/login'),
       headers: {
         'Content-Type': 'application/json',
       },

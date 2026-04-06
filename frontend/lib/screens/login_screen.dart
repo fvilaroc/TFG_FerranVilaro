@@ -26,23 +26,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
+  if (!_formKey.currentState!.validate()) return;
 
+  if (mounted) {
     setState(() {
       _errorMessage = null;
     });
-
-    try {
-      await context.read<AuthProvider>().login(
-            username: _usernameController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Usuario o contraseña incorrectos';
-      });
-    }
   }
+
+  try {
+    await context.read<AuthProvider>().login(
+          username: _usernameController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+  } catch (e) {
+    if (!mounted) return;
+    setState(() {
+      _errorMessage = 'Usuario o contraseña incorrectos o error de conexión';
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {

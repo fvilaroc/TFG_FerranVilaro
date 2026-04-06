@@ -26,13 +26,15 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         AuthenticationResponse response = authenticationService.authenticate(request);
 
+        System.out.println("HE ENTRADO AL CONTROLADOR LOGIN");
+
         return ResponseEntity.ok()
                 .header("Authorization", tokenPrefix + response.getAccessToken())
                 .body(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> user) {
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody Map<String, String> user) {
         AuthenticationResponse response = authenticationService.register(user);
 
         return ResponseEntity.ok()
