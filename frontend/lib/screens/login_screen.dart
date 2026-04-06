@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
   } catch (e) {
     if (!mounted) return;
     setState(() {
-      _errorMessage = 'Usuario o contraseña incorrectos o error de conexión';
+      _errorMessage = 'Usuario o contraseña incorrectos';
     });
   }
 }

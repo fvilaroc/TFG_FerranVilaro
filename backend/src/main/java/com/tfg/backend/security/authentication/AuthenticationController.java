@@ -26,8 +26,6 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         AuthenticationResponse response = authenticationService.authenticate(request);
 
-        System.out.println("HE ENTRADO AL CONTROLADOR LOGIN");
-
         return ResponseEntity.ok()
                 .header("Authorization", tokenPrefix + response.getAccessToken())
                 .body(response);

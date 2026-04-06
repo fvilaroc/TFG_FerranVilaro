@@ -23,9 +23,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   late final List<Widget> _screens = [
     HomeScreen(username: widget.username),
-    const DancesScreen(),
+    DancesScreen(token: widget.token),
     RankingScreen(token: widget.token),
-    ProfileScreen(username: widget.username),
+    ProfileScreen(username: widget.username, token: widget.token),
   ];
 
   final List<String> _titles = [
