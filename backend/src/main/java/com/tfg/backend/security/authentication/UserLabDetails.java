@@ -9,9 +9,14 @@ import java.util.Collections;
 
 public class UserLabDetails implements UserDetails {
     private final User userLab;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public UserLabDetails(User userLab) {
         this.userLab = userLab;
+
+        this.authorities = userLab.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -48,4 +53,12 @@ public class UserLabDetails implements UserDetails {
 
     public User getUser() {return userLab;}
 
+    @Override
+    public String toString() {
+        return "UserLab{" +
+                ", username='" + getUsername() + '\'' +
+                ", password='" + getPassword() + '\'' +
+                ", roles=" + authorities.toString() +
+                '}';
+    }
 }
