@@ -67,7 +67,8 @@ public class UserService {
                 user.getEmail(),
                 user.getUsername(),
                 user.getPoints(),
-                user.getStreak()
+                user.getStreak(),
+                user.getRoles()
         );
     }
 }

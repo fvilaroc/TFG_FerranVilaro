@@ -70,6 +70,10 @@ public class AuthenticationService {
         if (userRepository.findByUsername(username).isPresent())
             throw new IllegalArgumentException("Username already exists");
 
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
         User user = new User();
         user.setEmail(email);
         user.setUsername(username);
@@ -79,7 +83,7 @@ public class AuthenticationService {
         user.setPoints(0);
         user.setLastLogin(null);
         user.setStreak(0);
-        user.setRole(ERole.FREE);
+        user.setRoles(ERole.FREE);
 
         userRepository.save(user);
 

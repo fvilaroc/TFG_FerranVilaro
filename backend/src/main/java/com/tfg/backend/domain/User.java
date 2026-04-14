@@ -31,7 +31,7 @@ public class User {
     private int streak = 0; // Racha de días consecutivos de inicio de sesión
 
     @Enumerated(EnumType.STRING)
-    private ERole role; //role que tiene el usuario
+    private ERole roles; //role que tiene el usuario
 
     @OneToMany(mappedBy = "user")
     private List<UserDanceProgress> progresses;
@@ -47,6 +47,6 @@ public class User {
         this.points = points;
         this.lastLogin = lastLogin;
         this.streak = streak;
-        this.role = role;
+        this.roles = role;
     }
 }

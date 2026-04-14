@@ -3,6 +3,7 @@ package com.tfg.backend.security.authentication;
 import com.tfg.backend.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,9 +15,7 @@ public class UserLabDetails implements UserDetails {
     public UserLabDetails(User userLab) {
         this.userLab = userLab;
 
-        this.authorities = userLab.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
+        this.authorities = Collections.singletonList(new SimpleGrantedAuthority(userLab.getRoles().name()));
     }
 
     @Override
@@ -29,7 +28,7 @@ public class UserLabDetails implements UserDetails {
 
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {return Collections.emptyList();}
+    public Collection<? extends GrantedAuthority> getAuthorities() {return this.authorities;}
 
     @Override
     public boolean isAccountNonExpired() {
