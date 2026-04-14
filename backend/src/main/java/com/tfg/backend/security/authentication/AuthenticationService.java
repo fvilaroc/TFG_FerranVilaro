@@ -1,5 +1,6 @@
 package com.tfg.backend.security.authentication;
 
+import com.tfg.backend.domain.ERole;
 import com.tfg.backend.domain.User;
 import com.tfg.backend.persistance.UserRepository;
 import com.tfg.backend.service.UserService;
@@ -78,6 +79,7 @@ public class AuthenticationService {
         user.setPoints(0);
         user.setLastLogin(null);
         user.setStreak(0);
+        user.setRole(ERole.FREE);
 
         userRepository.save(user);
 

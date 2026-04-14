@@ -30,12 +30,15 @@ public class User {
     private LocalDate lastLogin; // Fecha del último inicio de sesión del usuario
     private int streak = 0; // Racha de días consecutivos de inicio de sesión
 
+    @Enumerated(EnumType.STRING)
+    private ERole role; //role que tiene el usuario
+
     @OneToMany(mappedBy = "user")
     private List<UserDanceProgress> progresses;
 
     public User() {}
 
-    public User(String email, String username, String password, LocalDate dateOfBirth, LocalDate registrationDate, int points, LocalDate lastLogin, int streak) {
+    public User(String email, String username, String password, LocalDate dateOfBirth, LocalDate registrationDate, int points, LocalDate lastLogin, int streak, ERole role) {
         this.email = email;
         this.username = username;
         this.password = password;
@@ -44,5 +47,6 @@ public class User {
         this.points = points;
         this.lastLogin = lastLogin;
         this.streak = streak;
+        this.role = role;
     }
 }
