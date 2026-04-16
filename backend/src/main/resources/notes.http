@@ -65,7 +65,7 @@ Content-Type: application/json
 }
 
 ### 4) Copia manualmente el token del login y pégalo aquí
-@token = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiZmVycmFuIiwiZXhwIjoxNzc1NDMzMTQ3LCJpYXQiOjE3NzUzOTcxNDcsInNjb3BlIjoiIn0.Sonivv7GhHJ_DF7hYl1NbDh0wbvAsVKpNuuH05qTH2yxM4dpWUUI8r3BSI4HJVZacO4z8C4o70YnNQ9LMiVbJg
+@token = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoidXNlcjciLCJleHAiOjE3NzY0MDkxODcsImlhdCI6MTc3NjM3MzE4Nywic2NvcGUiOiJGUkVFIn0.VWVUfF-ST-iU0NxEaJN9OUlBR1l0Q8z2FroERnHNkvnpVHMfZpVmbqgO9_rQJuwaZbiB0u6tlIoWUaceb3J_AQ
 
 ### 5) Obtener el usuario actual autenticado
 GET http://localhost:8080/api/users/currentUser
@@ -347,4 +347,124 @@ Authorization: Bearer {{token}}
 
 ### 30) Borrar un baile por ID (ajusta el ID antes de ejecutar)
 DELETE http://localhost:8080/api/dances/11
+Authorization: Bearer {{token}}
+
+
+
+### PROBAR ROLES
+### =========================
+### 1. REGISTER USER (FREE)
+### =========================
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "ferran132004@gmail.com",
+  "username": "user7",
+  "password": "1234",
+  "dateOfBirth": "2004-11-29"
+}
+
+### =========================
+### 2. LOGIN
+### =========================
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user7",
+  "password": "1234"
+}
+
+### =========================
+### 3. GET CURRENT USER (FREE)
+### =========================
+GET http://localhost:8080/api/users/currentUser
+Authorization: Bearer {{token}}
+
+### =========================
+### 4. UPGRADE TO PREMIUM
+### =========================
+PATCH http://localhost:8080/api/users/upgrade
+Authorization: Bearer {{token}}
+
+### =========================
+### 5. CHECK USER AGAIN (PREMIUM)
+### =========================
+GET http://localhost:8080/api/users/currentUser
+Authorization: Bearer {{token}}
+
+### =========================
+### 6. MAKE ADMIN
+### ⚠️ SOLO SI YA ERES ADMIN
+### =========================
+PATCH http://localhost:8080/api/users/createAdmin/user7
+Authorization: Bearer {{token}}
+
+### =========================
+### 7. CHECK USER AGAIN (ADMIN)
+### =========================
+GET http://localhost:8080/api/users/currentUser
+Authorization: Bearer {{token}}
+
+### =========================
+### 8. CREATE DANCE (ADMIN)
+### =========================
+POST http://localhost:8080/api/dances/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Sevillanas8",
+  "region": "Andalucía",
+  "description": "Baile típico andaluz",
+  "videoUrl": "https://youtube.com/test"
+}
+
+### =========================
+### 9. GET ALL DANCES
+### =========================
+GET http://localhost:8080/api/dances/all
+Authorization: Bearer {{token}}
+
+### =========================
+### 10. GENERATE QUIZ (PREMIUM)
+### =========================
+GET http://localhost:8080/api/questions/quiz/8
+Authorization: Bearer {{token}}
+
+### =========================
+### 11. CHECK ANSWER
+### =========================
+POST http://localhost:8080/api/questions/check
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "questionId": 10,
+  "answer": "A"
+}
+
+### =========================
+### 12. GET PROGRESS
+### =========================
+GET http://localhost:8080/api/progress/8
+Authorization: Bearer {{token}}
+
+### =========================
+### 13. GET ALL PROGRESS
+### =========================
+GET http://localhost:8080/api/progress/all
+Authorization: Bearer {{token}}
+
+### =========================
+### 14. GLOBAL RANKING
+### =========================
+GET http://localhost:8080/api/ranking/global
+Authorization: Bearer {{token}}
+
+### =========================
+### 15. DANCE RANKING
+### =========================
+GET http://localhost:8080/api/ranking/dance/8
 Authorization: Bearer {{token}}
