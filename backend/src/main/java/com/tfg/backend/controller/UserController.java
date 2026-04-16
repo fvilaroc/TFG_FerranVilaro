@@ -36,4 +36,9 @@ public class UserController {
     public UserDTO upgradeToPremium(Authentication authentication) {
         return userService.updateUserToPremium(authentication.getName());
     }
+
+    @PatchMapping("/createAdmin/{username}")
+    public void createAdmin(@PathVariable String username) {
+        userService.changeRoleToAdmin(username);
+    }
 }

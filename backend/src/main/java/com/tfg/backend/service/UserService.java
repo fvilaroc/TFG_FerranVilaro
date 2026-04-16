@@ -92,6 +92,14 @@ public class UserService {
         }
     }
 
+    public void changeRoleToAdmin(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        user.setRoles(ERole.ADMIN);
+        userRepository.save(user);
+    }
+
     private UserDTO toDTO(User user) {
         return new UserDTO(
                 user.getId(),
