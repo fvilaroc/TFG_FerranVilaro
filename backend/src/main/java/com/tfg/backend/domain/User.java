@@ -29,6 +29,8 @@ public class User {
     private int points = 0; // Puntos acumulados por el usuario
     private LocalDate lastLogin; // Fecha del último inicio de sesión del usuario
     private int streak = 0; // Racha de días consecutivos de inicio de sesión
+    private LocalDate premiumStartDate; // Fecha de inicio de la suscripción premium
+    private LocalDate premiumEndDate; // Fecha de fin de la suscripción premium
 
     @Enumerated(EnumType.STRING)
     private ERole roles; //role que tiene el usuario
@@ -38,7 +40,7 @@ public class User {
 
     public User() {}
 
-    public User(String email, String username, String password, LocalDate dateOfBirth, LocalDate registrationDate, int points, LocalDate lastLogin, int streak, ERole role) {
+    public User(String email, String username, String password, LocalDate dateOfBirth, LocalDate registrationDate, int points, LocalDate lastLogin, int streak, ERole role, LocalDate premiumStartDate, LocalDate premiumEndDate) {
         this.email = email;
         this.username = username;
         this.password = password;
@@ -48,5 +50,7 @@ public class User {
         this.lastLogin = lastLogin;
         this.streak = streak;
         this.roles = role;
+        this.premiumStartDate = premiumStartDate;
+        this.premiumEndDate = premiumEndDate;
     }
 }

@@ -51,6 +51,8 @@ public class AuthenticationService {
 
         userService.updateLoginStreak(user);
 
+        userService.checkAndUpdatePremiumStatus(user);
+
         var jwtToken = generateToken(authentication);
         AuthenticationResponse response = new AuthenticationResponse();
         response.setAccessToken(jwtToken);

@@ -1,5 +1,6 @@
 package com.tfg.backend.service;
 
+import com.tfg.backend.domain.ERole;
 import com.tfg.backend.domain.User;
 import com.tfg.backend.persistance.UserRepository;
 import com.tfg.backend.service.dto.UserDTO;
@@ -12,9 +13,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     public UserDTO getCurrentUser(String username) {
@@ -61,6 +64,34 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
     }
 
+    public UserDTO updateUserToPremium(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        if (user.getRoles() == ERole.ADMIN) throw new RuntimeException("Admin cannot be premium");
+
+        user.setRoles(ERole.PREMIUM);
+        user.setPremiumStartDate(LocalDate.now());
+        user.setPremiumEndDate(LocalDate.now().plusMonths(1));
+
+        userRepository.save(user);
+
+        emailService.sendPremiumUpgradeEmail(user.getEmail(), user.getUsername());
+
+        return toDTO(user);
+    }
+
+    public void checkAndUpdatePremiumStatus(User user) {
+        if (user.getRoles() == ERole.PREMIUM && user.getPremiumEndDate() != null) {
+            if (LocalDate.now().isAfter(user.getPremiumEndDate())) {
+                user.setRoles(ERole.FREE);
+                userRepository.save(user);
+
+                emailService.sendPremiumExpirationEmail(user.getEmail(), user.getUsername());
+            }
+        }
+    }
+
     private UserDTO toDTO(User user) {
         return new UserDTO(
                 user.getId(),
@@ -68,7 +99,9 @@ public class UserService {
                 user.getUsername(),
                 user.getPoints(),
                 user.getStreak(),
-                user.getRoles()
+                user.getRoles(),
+                user.getPremiumStartDate(),
+                user.getPremiumEndDate()
         );
     }
 }
