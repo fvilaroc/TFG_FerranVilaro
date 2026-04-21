@@ -46,14 +46,22 @@ public class UserService {
         if (user.getLastLogin() == null) {
             user.setLastLogin(today);
             user.setStreak(1);
+            user.setPoints(user.getPoints() + 10);
         } else if (user.getLastLogin().equals(today)) {
             return;
         } else if (user.getLastLogin().equals(today.minusDays(1))) {
             user.setStreak(user.getStreak() + 1);
             user.setLastLogin(today);
+            if(user.getStreak() >= 5) {
+                user.setPoints(user.getPoints() + 50);
+            }
+            else {
+                user.setPoints(user.getPoints() + (user.getStreak()*10));
+            }
         } else {
             user.setStreak(1);
             user.setLastLogin(today);
+            user.setPoints(user.getPoints() + 10);
         }
 
         userRepository.save(user);
