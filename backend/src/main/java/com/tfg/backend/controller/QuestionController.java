@@ -8,6 +8,7 @@ import com.tfg.backend.service.UserService;
 import com.tfg.backend.service.dto.AnswerRequestDTO;
 import com.tfg.backend.service.dto.AnswerResponseDTO;
 import com.tfg.backend.service.dto.QuestionDTO;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class QuestionController {
     }
 
     @GetMapping("/quiz/{danceId}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_PREMIUM', 'SCOPE_ADMIN')")
     public List<QuestionDTO> generateQuiz(Authentication authentication,
                                           @PathVariable Long danceId) {
 
@@ -37,6 +39,7 @@ public class QuestionController {
     }
 
     @PostMapping("/check")
+    @PreAuthorize("hasAnyAuthority('SCOPE_PREMIUM', 'SCOPE_ADMIN')")
     public AnswerResponseDTO checkAnswer(Authentication authentication,
                                          @RequestBody AnswerRequestDTO request) {
 
@@ -62,11 +65,13 @@ public class QuestionController {
     }
 
     @PostMapping("/save")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public Question saveQuestion(@RequestBody Question question) {
         return questionService.saveQuestion(question);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
     }

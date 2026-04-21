@@ -28,9 +28,9 @@ POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "defrfr",
-  "username": "user3",
-  "password": "password123",
+  "email": "admin@admin.com",
+  "username": "admin",
+  "password": "admin",
   "dateOfBirth": "2004-11-29"
 }
 
@@ -65,7 +65,7 @@ Content-Type: application/json
 }
 
 ### 4) Copia manualmente el token del login y pégalo aquí
-@token = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoidXNlcjciLCJleHAiOjE3NzY0MDkxODcsImlhdCI6MTc3NjM3MzE4Nywic2NvcGUiOiJGUkVFIn0.VWVUfF-ST-iU0NxEaJN9OUlBR1l0Q8z2FroERnHNkvnpVHMfZpVmbqgO9_rQJuwaZbiB0u6tlIoWUaceb3J_AQ
+@token = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoicHJlbWl1bSIsImV4cCI6MTc3Njg0NTAxMCwiaWF0IjoxNzc2ODA5MDEwLCJzY29wZSI6IkZSRUUifQ.pyBrEoA814d9zYPQowEhfV-jmAXOX9O0KHxuLL_CSdK5WSFwGC_rCLWZgYlwPyEhBkd-EJskJYTq2fZOEHgcyQ
 
 ### 5) Obtener el usuario actual autenticado
 GET http://localhost:8080/api/users/currentUser
@@ -359,9 +359,9 @@ POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "ferran132004@gmail.com",
-  "username": "user7",
-  "password": "1234",
+  "email": "free@free.com",
+  "username": "free",
+  "password": "free",
   "dateOfBirth": "2004-11-29"
 }
 
@@ -398,7 +398,7 @@ Authorization: Bearer {{token}}
 ### 6. MAKE ADMIN
 ### ⚠️ SOLO SI YA ERES ADMIN
 ### =========================
-PATCH http://localhost:8080/api/users/createAdmin/user7
+PATCH http://localhost:8080/api/users/createAdmin/admin
 Authorization: Bearer {{token}}
 
 ### =========================
@@ -468,3 +468,178 @@ Authorization: Bearer {{token}}
 ### =========================
 GET http://localhost:8080/api/ranking/dance/8
 Authorization: Bearer {{token}}
+
+
+
+### PROBAR RESTRICCIONES DE ROL
+### =========================
+### VARIABLES
+### =========================
+@host = http://localhost:8080
+
+### Guarda aquí los tokens manualmente después de login
+@token_admin = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3NzY4NDc4ODksImlhdCI6MTc3NjgxMTg4OSwic2NvcGUiOiJBRE1JTiJ9.1fjIHjne_KEP-1Vzn4or8qvv-ZSHKYhkPtIV614A7IiaVrlTc8-cGjzwKErHpOEJTsnzhbRNu3GmNQ8llg5BmQ
+@token_premium = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoicHJlbWl1bSIsImV4cCI6MTc3Njg0NzkxMSwiaWF0IjoxNzc2ODExOTExLCJzY29wZSI6IlBSRU1JVU0ifQ.KnRMw0OReX8FBDfOYTdLxh33_ppLUYDVztklXkrno9Q_Pv9-wMeBmklE6y-U13a51WNHw8qxcuRE5HGfk-D60A
+@token_free = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiZnJlZSIsImV4cCI6MTc3Njg0NzkzNSwiaWF0IjoxNzc2ODExOTM1LCJzY29wZSI6IkZSRUUifQ.nMc3IrxA_7O3ec4gJkpmXad87q266DRSGfxszzROUbpOP_sa3hJye6L1iU-UrBJLhDNcAGF1nFwLrEmsUuEung
+
+### =========================
+### LOGIN (ADMIN)
+### =========================
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+
+### LOGIN (PREMIUM)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "premium",
+  "password": "premium"
+}
+
+###
+
+### LOGIN (FREE)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "free",
+  "password": "free"
+}
+
+###
+
+##################################################
+#                DANCE CONTROLLER
+##################################################
+
+### GET ALL DANCES (FREE, PREMIUM, ADMIN)
+GET {{host}}/api/dances/all
+Authorization: Bearer {{token_free}}
+
+###
+
+### GET DANCE BY ID (PUBLIC - sin seguridad)
+GET {{host}}/api/dances/8
+Authorization: Bearer {{token_free}}
+
+###
+
+### CREATE DANCE (ADMIN ONLY)
+POST {{host}}/api/dances/save
+Authorization: Bearer {{token_admin}}
+Content-Type: application/json
+
+{
+  "name": "Flamenco",
+  "region": "Andalucía",
+  "description": "Baile tradicional",
+  "videoUrl": "https://youtube.com/flamenco"
+}
+
+###
+
+### DELETE DANCE (ADMIN ONLY)
+DELETE {{host}}/api/dances/14
+Authorization: Bearer {{token_admin}}
+
+###
+
+### ❌ TEST ERROR (FREE intentando crear dance)
+POST {{host}}/api/dances/save
+Authorization: Bearer {{token_free}}
+Content-Type: application/json
+
+{
+  "name": "Error Dance",
+  "region": "Test",
+  "description": "No debería funcionar",
+  "videoUrl": "test"
+}
+
+###
+
+##################################################
+#                QUESTION CONTROLLER
+##################################################
+
+### GENERATE QUIZ (PREMIUM, ADMIN)
+GET {{host}}/api/questions/quiz/8
+Authorization: Bearer {{token_premium}}
+
+###
+
+### ❌ TEST ERROR (FREE intentando quiz)
+GET {{host}}/api/questions/quiz/8
+Authorization: Bearer {{token_free}}
+
+###
+
+### CHECK ANSWER (PREMIUM, ADMIN)
+POST {{host}}/api/questions/check
+Authorization: Bearer {{token_premium}}
+Content-Type: application/json
+
+{
+  "questionId": 8,
+  "answer": "A"
+}
+
+###
+
+### CREATE QUESTION (ADMIN ONLY)
+POST {{host}}/api/questions/save
+Authorization: Bearer {{token_admin}}
+Content-Type: application/json
+
+{
+  "question": "¿Dónde nació el flamenco?",
+  "optionA": "Andalucía",
+  "optionB": "Madrid",
+  "optionC": "Galicia",
+  "optionD": "Cataluña",
+  "correctAnswer": "A",
+  "points": 10,
+  "difficulty": "EASY",
+  "dance": {
+    "id": 8
+  }
+}
+
+###
+
+### DELETE QUESTION (ADMIN ONLY)
+DELETE {{host}}/api/questions/14
+Authorization: Bearer {{token_admin}}
+
+###
+
+##################################################
+#                RANKING CONTROLLER
+##################################################
+
+### GLOBAL RANKING (PUBLIC)
+GET {{host}}/api/ranking/global
+Authorization: Bearer {{token_free}}
+
+###
+
+### DANCE RANKING (PREMIUM, ADMIN)
+GET {{host}}/api/ranking/dance/8
+Authorization: Bearer {{token_premium}}
+
+###
+
+### ❌ TEST ERROR (FREE intentando ranking por baile)
+GET {{host}}/api/ranking/dance/8
+Authorization: Bearer {{token_free}}
+
+###

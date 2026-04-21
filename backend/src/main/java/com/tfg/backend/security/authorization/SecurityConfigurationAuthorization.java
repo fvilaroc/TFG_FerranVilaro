@@ -1,43 +1,3 @@
-/*package com.tfg.backend.security.authorization;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
-public class SecurityConfigurationAuthorization {
-    private final JwtDecoder jwtDecoder;
-
-    public SecurityConfigurationAuthorization(JwtDecoder jwtDecoder) {
-        this.jwtDecoder = jwtDecoder;
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        return http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable()) //This is to disable the csrf protection. It is not needed for this project since the application is stateless (and we are using JWT)
-                  // This is to allow the h2-console to be used in the browser. It allows the browser to render the response in a frame.
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers( "/api/**").permitAll()
-                    .anyRequest().authenticated();
-                })
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(jwtDecoder)))
-                .httpBasic(Customizer.withDefaults())
-                .build();
-    }
-}
-*/
 package com.tfg.backend.security.authorization;
 
 import org.springframework.context.annotation.Bean;
@@ -47,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -54,9 +15,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfigurationAuthorization {
 
     private final JwtDecoder jwtDecoder;
+    private final JwtAuthenticationConverter jwtAuthenticationConverter;
 
-    public SecurityConfigurationAuthorization(JwtDecoder jwtDecoder) {
+    public SecurityConfigurationAuthorization(JwtDecoder jwtDecoder,
+                                              JwtAuthenticationConverter jwtAuthenticationConverter) {
         this.jwtDecoder = jwtDecoder;
+        this.jwtAuthenticationConverter = jwtAuthenticationConverter;
     }
 
     @Bean
@@ -69,7 +33,10 @@ public class SecurityConfigurationAuthorization {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
+                        .decoder(jwtDecoder)
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter)
+                ))
                 .build();
     }
 }
