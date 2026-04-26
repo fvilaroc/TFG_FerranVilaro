@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
-import 'dances_screen.dart';
-import 'ranking_screen.dart';
-import 'profile_screen.dart';
+
+import 'home_screen.dart' as home;
+import 'dances_screen.dart' as dances;
+import 'ranking_screen.dart' as ranking;
+import 'profile_screen.dart' as profile;
 
 class MainNavigationScreen extends StatefulWidget {
   final String username;
@@ -34,15 +35,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   late final List<Widget> _screens = [
-    HomeScreen(
+    home.HomeScreen(
       username: widget.username,
       token: widget.token,
       onGoToDances: _goToDances,
       onGoToRanking: _goToRanking,
     ),
-    DancesScreen(token: widget.token),
-    RankingScreen(token: widget.token),
-    ProfileScreen(username: widget.username, token: widget.token),
+    dances.DancesScreen(token: widget.token),
+    ranking.RankingScreen(token: widget.token),
+    profile.ProfileScreen(username: widget.username, token: widget.token),
   ];
 
   final List<String> _titles = [

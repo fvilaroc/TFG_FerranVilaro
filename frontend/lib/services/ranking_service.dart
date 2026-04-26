@@ -6,7 +6,7 @@ import '../models/ranking_models.dart';
 class RankingService {
   Future<List<GlobalRankingEntry>> getGlobalRanking(String token) async {
     final response = await http.get(
-      Uri.parse('${AppConfig.baseUrl}/api/ranking/global'),
+      Uri.parse('${AppConfig.baseUrl}/ranking/global'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

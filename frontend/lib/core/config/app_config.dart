@@ -2,7 +2,7 @@ class AppConfig {
   // CAMBIA ESTA URL SEGUN DONDE EJECUTES LA APP
 
   // Para Chrome/Web normalmente:
-  static const String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = 'http://localhost:8080/api';
 
   // Para emulador Android sería:
   // static const String baseUrl = 'http://10.0.2.2:8080';

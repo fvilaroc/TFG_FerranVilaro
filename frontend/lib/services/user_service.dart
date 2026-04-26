@@ -6,7 +6,7 @@ import '../models/user_profile.dart';
 class UserService {
   Future<UserProfile> getMyProfile(String token) async {
     final response = await http.get(
-      Uri.parse('${AppConfig.baseUrl}/api/users/currentUser'),
+      Uri.parse('${AppConfig.baseUrl}/users/currentUser'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

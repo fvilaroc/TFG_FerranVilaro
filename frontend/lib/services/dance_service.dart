@@ -6,7 +6,7 @@ import '../models/dance.dart';
 class DanceService {
   Future<List<Dance>> getAllDances(String token) async {
     final response = await http.get(
-      Uri.parse('${AppConfig.baseUrl}/api/dances/all'),
+      Uri.parse('${AppConfig.baseUrl}/dances/all'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

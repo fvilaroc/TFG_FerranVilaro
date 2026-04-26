@@ -8,7 +8,7 @@ import '../models/answer_response.dart';
 class QuestionService {
   Future<List<Question>> getQuestionsByDance(int danceId, String token) async {
     final response = await http.get(
-      Uri.parse('${AppConfig.baseUrl}/api/questions/quiz/$danceId'),
+      Uri.parse('${AppConfig.baseUrl}/questions/quiz/$danceId'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -34,7 +34,7 @@ class QuestionService {
     );
 
     final response = await http.post(
-      Uri.parse('${AppConfig.baseUrl}/api/questions/check'),
+      Uri.parse('${AppConfig.baseUrl}/questions/check'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
