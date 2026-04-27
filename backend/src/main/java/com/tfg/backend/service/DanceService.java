@@ -46,7 +46,11 @@ public class DanceService {
                 dance.getName(),
                 dance.getRegion(),
                 dance.getDescription(),
-                dance.getVideoUrl()
+                dance.getVideoUrl(),
+                dance.getHistory(),
+                dance.getOrigin(),
+                dance.getClothing(),
+                dance.getMusicCharacteristics()
         );
     }
 }

@@ -4,6 +4,10 @@ class Dance {
   final String region;
   final String description;
   final String videoUrl;
+  final String history;
+  final String origin;
+  final String clothing;
+  final String musicCharacteristics;
 
   Dance({
     required this.id,
@@ -11,6 +15,10 @@ class Dance {
     required this.region,
     required this.description,
     required this.videoUrl,
+    required this.history,
+    required this.origin,
+    required this.clothing,
+    required this.musicCharacteristics
   });
 
   factory Dance.fromJson(Map<String, dynamic> json) {
@@ -20,6 +28,10 @@ class Dance {
       region: json['region'] ?? '',
       description: json['description'] ?? '',
       videoUrl: json['videoUrl'] ?? '',
+      history: json['history'] ?? '',
+      origin: json['origin'] ?? '',
+      clothing: json['clothing'] ?? '',
+      musicCharacteristics: json['musicCharacteristics'] ?? ''
     );
   }
 }

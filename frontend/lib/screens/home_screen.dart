@@ -143,10 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Error ${response.statusCode}: ${response.body}',
-            ),
-            //content: Text('No se pudo mejorar la cuenta: ${response.body}'),
+            content: Text('No se pudo mejorar la cuenta: ${response.body}'),
           ),
         );
       }
@@ -457,21 +454,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.16),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              'Inicio',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.98),
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-              ),
-            ),
-          ),
           const SizedBox(height: 18),
           Text(
             'Bienvenido, $username',
@@ -609,36 +591,6 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: widget.onGoToRanking,
           ),
           const SizedBox(height: 22),
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Icon(
-                  Icons.lightbulb_rounded,
-                  color: Color(0xFFF59E0B),
-                  size: 24,
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Consejo: entra cada día para mantener tu racha y seguir subiendo en el ranking.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF374151),
-                      height: 1.45,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
