@@ -1,7 +1,7 @@
 package com.tfg.backend.controller;
 
 import com.tfg.backend.service.UserService;
-import com.tfg.backend.service.dto.UserDTO;
+import com.tfg.backend.service.dto.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,17 +43,17 @@ public class UserController {
     }
 
     @PatchMapping("/updateUsername")
-    public UserDTO updateUsername(Authentication authentication, @RequestBody String newUsername) {
-        return userService.updateUsername(authentication.getName(), newUsername);
+    public UserDTO updateUsername(Authentication authentication, @RequestBody UpdateUsernameRequestDTO username) {
+        return userService.updateUsername(authentication.getName(), username.getNewUsername());
     }
 
     @PatchMapping("/updateEmail")
-    public void updateEmail(Authentication authentication, @RequestBody String newEmail) {
-        userService.updateEmail(authentication.getName(), newEmail);
+    public void updateEmail(Authentication authentication, @RequestBody UpdateEmailRequestDTO email) {
+        userService.updateEmail(authentication.getName(), email.getNewEmail());
     }
 
     @PatchMapping("/updatePassword")
-    public void updatePassword(Authentication authentication, @RequestBody String newPassword) {
-        userService.updatePassword(authentication.getName(), newPassword);
+    public void updatePassword(Authentication authentication, @RequestBody UpdatePasswordRequestDTO password) {
+        userService.updatePassword(authentication.getName(), password.getCurrentPassword(), password.getNewPassword());
     }
 }
