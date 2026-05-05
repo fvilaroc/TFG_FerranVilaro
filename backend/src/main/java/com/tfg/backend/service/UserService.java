@@ -4,6 +4,7 @@ import com.tfg.backend.domain.ERole;
 import com.tfg.backend.domain.User;
 import com.tfg.backend.persistance.UserRepository;
 import com.tfg.backend.service.dto.UserDTO;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,10 +15,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, EmailService emailService) {
+    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDTO getCurrentUser(String username) {
@@ -105,6 +108,32 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
         user.setRoles(ERole.ADMIN);
+        userRepository.save(user);
+    }
+
+    public UserDTO updateUsername (String username, String newUsername) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        user.setUsername(newUsername);
+        userRepository.save(user);
+
+        return toDTO(user);
+    }
+
+    public void updateEmail (String username, String newEmail) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        user.setEmail(newEmail);
+        userRepository.save(user);
+    }
+
+    public void updatePassword (String username, String newPassword) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 

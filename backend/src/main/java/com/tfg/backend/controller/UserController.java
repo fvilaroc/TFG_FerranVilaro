@@ -41,4 +41,19 @@ public class UserController {
     public void createAdmin(@PathVariable String username) {
         userService.changeRoleToAdmin(username);
     }
+
+    @PatchMapping("/updateUsername")
+    public UserDTO updateUsername(Authentication authentication, @RequestBody String newUsername) {
+        return userService.updateUsername(authentication.getName(), newUsername);
+    }
+
+    @PatchMapping("/updateEmail")
+    public void updateEmail(Authentication authentication, @RequestBody String newEmail) {
+        userService.updateEmail(authentication.getName(), newEmail);
+    }
+
+    @PatchMapping("/updatePassword")
+    public void updatePassword(Authentication authentication, @RequestBody String newPassword) {
+        userService.updatePassword(authentication.getName(), newPassword);
+    }
 }
