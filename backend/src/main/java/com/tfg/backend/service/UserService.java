@@ -115,6 +115,14 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
+        if(newUsername == null || newUsername.trim().isBlank())
+            throw new RuntimeException("New username cannot be empty");
+
+        newUsername = newUsername.trim();
+
+        if(userRepository.existsByUsername(newUsername))
+            throw new RuntimeException("Username already exists: " + newUsername);
+
         user.setUsername(newUsername);
         userRepository.save(user);
 
@@ -125,14 +133,34 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
+        if(newEmail == null || newEmail.trim().isBlank())
+            throw new RuntimeException("New email cannot be empty");
+
+        newEmail = newEmail.trim().toLowerCase();
+
+        if(!newEmail.contains("@"))
+            throw new RuntimeException("Invalid email format: " + newEmail);
+
+        if(userRepository.existsByEmail(newEmail))
+            throw new RuntimeException("Email already exists: " + newEmail);
+
         user.setEmail(newEmail);
         userRepository.save(user);
     }
 
-    public void updatePassword (String username, String newPassword) {
+    public void updatePassword (String username, String currentPassword, String newPassword) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
+        if(!passwordEncoder.matches(currentPassword, user.getPassword()))
+            throw new RuntimeException("Current password is incorrect");
+
+        if(newPassword == null || newPassword.trim().isBlank())
+            throw new RuntimeException("New password cannot be empty");
+
+        if(!passwordEncoder.matches(newPassword, user.getPassword()))
+            throw new RuntimeException("New password cannot be the same as the current password");
+        
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
