@@ -96,7 +96,6 @@ class _StreakScreenState extends State<StreakScreen> {
   }
 
   Widget _buildHeader(int streak) {
-    final flameColor = _getFlameColor(streak);
 
     return Container(
       width: double.infinity,
