@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth_provider.dart';
 
 import 'home_screen.dart' as home;
 import 'dances_screen.dart' as dances;
@@ -31,19 +34,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     setState(() => _selectedIndex = 3);
   }
 
-  late final List<Widget> _screens = [
-    home.HomeScreen(
-      username: widget.username,
-      token: widget.token,
-      onGoToDances: _goToDances,
-      onGoToRanking: _goToRanking,
-    ),
-    dances.DancesScreen(token: widget.token),
-    streak.StreakScreen(token: widget.token),
-    ranking.RankingScreen(token: widget.token),
-    profile.ProfileScreen(username: widget.username, token: widget.token),
-  ];
-
   final List<String> _titles = [
     'Inicio',
     'Bailes',
@@ -54,6 +44,27 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
+    final currentToken = authProvider.token ?? widget.token;
+    final currentUsername = authProvider.username ?? widget.username;
+
+    final screens = [
+      home.HomeScreen(
+        username: currentUsername,
+        token: currentToken,
+        onGoToDances: _goToDances,
+        onGoToRanking: _goToRanking,
+      ),
+      dances.DancesScreen(token: currentToken),
+      streak.StreakScreen(token: currentToken),
+      ranking.RankingScreen(token: currentToken),
+      profile.ProfileScreen(
+        username: currentUsername,
+        token: currentToken,
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -69,7 +80,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      body: _screens[_selectedIndex],
+      body: screens[_selectedIndex],
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(

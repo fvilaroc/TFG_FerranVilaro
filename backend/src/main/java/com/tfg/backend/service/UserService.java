@@ -162,7 +162,7 @@ public class UserService {
         if(newPassword == null || newPassword.trim().isBlank())
             throw new RuntimeException("New password cannot be empty");
 
-        if(!passwordEncoder.matches(newPassword, user.getPassword()))
+        if(passwordEncoder.matches(newPassword, user.getPassword()))
             throw new RuntimeException("New password cannot be the same as the current password");
 
         user.setPassword(passwordEncoder.encode(newPassword));

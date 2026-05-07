@@ -54,7 +54,7 @@ class UserService {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
-          'email': newEmail,
+          'newEmail': newEmail,
         }),
       );
 
@@ -65,6 +65,7 @@ class UserService {
 
     Future<void> updatePassword({
       required String token,
+      required String currentPassword,
       required String newPassword,
     }) async {
       final response = await http.patch(
@@ -74,7 +75,8 @@ class UserService {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
-          'password': newPassword,
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
         }),
       );
 

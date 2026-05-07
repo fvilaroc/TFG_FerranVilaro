@@ -30,8 +30,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadProfile();
   }
 
+  @override
+  void didUpdateWidget(covariant ProfileScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.token != widget.token) {
+      setState(() {
+        _loadProfile();
+      });
+    }
+  }
+
   void _loadProfile() {
-    _profileFuture = _userService.getMyProfile(widget.token);
+    final currentToken = context.read<AuthProvider>().token ?? widget.token;
+    _profileFuture = _userService.getMyProfile(currentToken);
   }
 
   Future<void> _goToUpdateProfile() async {
@@ -43,8 +55,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (updated == true) {
+      final currentToken = context.read<AuthProvider>().token ?? widget.token;
+
       setState(() {
-        _loadProfile();
+        _profileFuture = _userService.getMyProfile(currentToken);
       });
     }
   }

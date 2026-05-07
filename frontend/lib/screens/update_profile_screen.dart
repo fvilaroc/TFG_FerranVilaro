@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
 
+import '../providers/auth_provider.dart';
 import '../services/user_service.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
@@ -18,7 +18,10 @@ class UpdateProfileScreen extends StatefulWidget {
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final UserService _userService = UserService();
+
   final TextEditingController _valueController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
 
   String _selectedField = 'username';
   bool _isSaving = false;
@@ -32,16 +35,27 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   @override
   void dispose() {
     _valueController.dispose();
+    _currentPasswordController.dispose();
     super.dispose();
   }
 
   Future<void> _updateProfile() async {
     final value = _valueController.text.trim();
+    final currentPassword = _currentPasswordController.text.trim();
 
     if (value.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Introduce un valor válido.'),
+        ),
+      );
+      return;
+    }
+
+    if (_selectedField == 'password' && currentPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Introduce tu contraseña actual.'),
         ),
       );
       return;
@@ -59,9 +73,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         );
 
         await context.read<AuthProvider>().updateSession(
-          token: response.token,
-          username: response.user.username,
-        );
+              token: response.token,
+              username: response.user.username,
+            );
       } else if (_selectedField == 'email') {
         await _userService.updateEmail(
           token: widget.token,
@@ -70,6 +84,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       } else {
         await _userService.updatePassword(
           token: widget.token,
+          currentPassword: currentPassword,
           newPassword: value,
         );
       }
@@ -180,6 +195,42 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     );
   }
 
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        filled: true,
+        fillColor: const Color(0xFFF8FAFC),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(
+            color: Color(0xFFE5E7EB),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(
+            color: Color(0xFF7C3AED),
+            width: 1.6,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFormCard() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -222,39 +273,32 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
               setState(() {
                 _selectedField = value;
                 _valueController.clear();
+                _currentPasswordController.clear();
               });
             },
           ),
           const SizedBox(height: 16),
-          TextField(
+
+          if (_selectedField == 'password') ...[
+            _buildInputField(
+              controller: _currentPasswordController,
+              label: 'Introduce tu contraseña actual',
+              icon: Icons.lock_clock_rounded,
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          _buildInputField(
             controller: _valueController,
+            label: _getHintText(),
+            icon: _getIcon(),
             obscureText: _isPasswordField(),
             keyboardType: _selectedField == 'email'
                 ? TextInputType.emailAddress
                 : TextInputType.text,
-            decoration: InputDecoration(
-              labelText: _getHintText(),
-              prefixIcon: Icon(_getIcon()),
-              filled: true,
-              fillColor: const Color(0xFFF8FAFC),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: const BorderSide(
-                  color: Color(0xFFE5E7EB),
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: const BorderSide(
-                  color: Color(0xFF7C3AED),
-                  width: 1.6,
-                ),
-              ),
-            ),
           ),
+
           const SizedBox(height: 22),
           SizedBox(
             width: double.infinity,
@@ -283,41 +327,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard() {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: const Color(0xFFE5E7EB),
-        ),
-      ),
-      child: const Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.info_rounded,
-            color: Color(0xFFF59E0B),
-            size: 24,
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Si modificas el username, el backend devuelve un nuevo token para mantener la sesión actualizada.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF374151),
-                height: 1.45,
-                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -367,7 +376,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             const SizedBox(height: 22),
             _buildFormCard(),
             const SizedBox(height: 18),
-            _buildInfoCard(),
           ],
         ),
       ),
