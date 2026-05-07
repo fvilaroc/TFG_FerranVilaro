@@ -160,7 +160,7 @@ public class UserService {
 
         if(!passwordEncoder.matches(newPassword, user.getPassword()))
             throw new RuntimeException("New password cannot be the same as the current password");
-        
+
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
