@@ -3,6 +3,8 @@ package com.tfg.backend.service;
 import com.tfg.backend.domain.ERole;
 import com.tfg.backend.domain.User;
 import com.tfg.backend.persistance.UserRepository;
+import com.tfg.backend.security.authentication.AuthenticationService;
+import com.tfg.backend.service.dto.UpdateUsernameResponseDTO;
 import com.tfg.backend.service.dto.UserDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationService authenticationService;
 
-    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationService = authenticationService;
     }
 
     public UserDTO getCurrentUser(String username) {
@@ -111,7 +115,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserDTO updateUsername (String username, String newUsername) {
+    public UpdateUsernameResponseDTO updateUsername (String username, String newUsername) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
@@ -126,7 +130,7 @@ public class UserService {
         user.setUsername(newUsername);
         userRepository.save(user);
 
-        return toDTO(user);
+        return new UpdateUsernameResponseDTO(toDTO(user), authenticationService.generateNewToken(user));
     }
 
     public void updateEmail (String username, String newEmail) {

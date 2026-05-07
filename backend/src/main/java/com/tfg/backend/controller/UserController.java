@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PatchMapping("/updateUsername")
-    public UserDTO updateUsername(Authentication authentication, @RequestBody UpdateUsernameRequestDTO username) {
+    public UpdateUsernameResponseDTO updateUsername(Authentication authentication, @RequestBody UpdateUsernameRequestDTO username) {
         return userService.updateUsername(authentication.getName(), username.getNewUsername());
     }
 
