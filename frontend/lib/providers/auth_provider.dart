@@ -92,4 +92,18 @@ class AuthProvider extends ChangeNotifier {
     _isAuthenticated = false;
     notifyListeners();
   }
+
+  Future<void> updateSession({
+  required String token,
+  required String username,
+}) async {
+  _token = token;
+  _username = username;
+  _isAuthenticated = true;
+
+  await _storageService.saveToken(token);
+  await _storageService.saveUsername(username);
+
+  notifyListeners();
+}
 }

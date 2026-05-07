@@ -18,13 +18,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationService authenticationService;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationService authenticationService) {
+    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationService = authenticationService;
+        this.jwtService = jwtService;
     }
 
     public UserDTO getCurrentUser(String username) {
@@ -130,7 +130,7 @@ public class UserService {
         user.setUsername(newUsername);
         userRepository.save(user);
 
-        return new UpdateUsernameResponseDTO(toDTO(user), authenticationService.generateNewToken(user));
+        return new UpdateUsernameResponseDTO(toDTO(user), jwtService.generateNewToken(user));
     }
 
     public void updateEmail (String username, String newEmail) {

@@ -372,8 +372,8 @@ POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "user7",
-  "password": "1234"
+  "username": "free2",
+  "password": "free"
 }
 
 ### =========================
@@ -480,7 +480,7 @@ Authorization: Bearer {{token}}
 ### Guarda aquí los tokens manualmente después de login
 @token_admin = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3NzY4NDc4ODksImlhdCI6MTc3NjgxMTg4OSwic2NvcGUiOiJBRE1JTiJ9.1fjIHjne_KEP-1Vzn4or8qvv-ZSHKYhkPtIV614A7IiaVrlTc8-cGjzwKErHpOEJTsnzhbRNu3GmNQ8llg5BmQ
 @token_premium = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoicHJlbWl1bSIsImV4cCI6MTc3Njg0NzkxMSwiaWF0IjoxNzc2ODExOTExLCJzY29wZSI6IlBSRU1JVU0ifQ.KnRMw0OReX8FBDfOYTdLxh33_ppLUYDVztklXkrno9Q_Pv9-wMeBmklE6y-U13a51WNHw8qxcuRE5HGfk-D60A
-@token_free = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiZnJlZSIsImV4cCI6MTc3Njg0NzkzNSwiaWF0IjoxNzc2ODExOTM1LCJzY29wZSI6IkZSRUUifQ.nMc3IrxA_7O3ec4gJkpmXad87q266DRSGfxszzROUbpOP_sa3hJye6L1iU-UrBJLhDNcAGF1nFwLrEmsUuEung
+@token_free = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiZnJlZTIiLCJleHAiOjE3NzgyMjczOTcsImlhdCI6MTc3ODE5MTM5Nywic2NvcGUiOiJGUkVFIn0.da5dhvhyp3QsC4-luV0jGBxso6Z_UsUzDd7-RmHZT_bFewqMDPURclmOdgxLPmhld3msXUWHpoSxZjRLqyy0zg
 
 ### =========================
 ### LOGIN (ADMIN)
@@ -642,4 +642,13 @@ Authorization: Bearer {{token_premium}}
 GET {{host}}/api/ranking/dance/8
 Authorization: Bearer {{token_free}}
 
-###
+
+
+### UPDATE USERNAME
+PATCH {{host}}/api/users/updateUsername
+Authorization: Bearer {{token_free}}
+Content-Type: application/json
+
+{
+  "newUsername": "free"
+}

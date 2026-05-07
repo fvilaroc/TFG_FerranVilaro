@@ -112,25 +112,4 @@ public class AuthenticationService {
         return jwtEncoder.encode(encoderParameters).getTokenValue();
     }
 
-    public String generateNewToken(User user) {
-        Instant now = Instant.now();
-
-        String scope = user.getRoles().name();
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(10, ChronoUnit.HOURS))
-                .subject(user.getUsername())
-                .claim("scope", scope)
-                .build();
-
-        var encoderParameters = JwtEncoderParameters.from(
-                JwsHeader.with(MacAlgorithm.HS512).build(),
-                claims
-        );
-
-        return jwtEncoder.encode(encoderParameters).getTokenValue();
-    }
-
 }
