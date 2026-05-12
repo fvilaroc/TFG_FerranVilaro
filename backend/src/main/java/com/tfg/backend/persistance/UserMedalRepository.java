@@ -1,11 +1,13 @@
 package com.tfg.backend.persistance;
 
-import com.tfg.backend.domain.EMedal;
-import com.tfg.backend.domain.User;
-import com.tfg.backend.domain.UserMedal;
+import com.tfg.backend.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface UserMedalRepository extends JpaRepository<UserMedal, Long> {
 
     boolean existsByUserAndMedal(User user, EMedal medal);
+
+    List<UserMedal> findByUserId(Long userId);
 }

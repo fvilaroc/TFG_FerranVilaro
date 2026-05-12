@@ -19,12 +19,14 @@ public class UserService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserMedalService userMedalService;
 
-    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder, JwtService jwtService, UserMedalService userMedalService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.userMedalService = userMedalService;
     }
 
     public UserDTO getCurrentUser(String username) {
@@ -72,6 +74,8 @@ public class UserService {
         }
 
         userRepository.save(user);
+
+        userMedalService.checkStreakMedals(user);
     }
 
     public User getUserEntityByUsername(String username) {
@@ -92,6 +96,8 @@ public class UserService {
         userRepository.save(user);
 
         emailService.sendPremiumUpgradeEmail(user.getEmail(), user.getUsername());
+
+        userMedalService.checkPremiumMedal(user);
 
         return toDTO(user);
     }

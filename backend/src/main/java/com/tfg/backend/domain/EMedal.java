@@ -5,6 +5,5 @@ public enum EMedal {
     STREAK_5,
     STREAK_10,
     STREAK_25,
-    DANCE_EXPERT,
     PREMIUM_USER
 }

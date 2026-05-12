@@ -4,7 +4,11 @@ import com.tfg.backend.domain.EMedal;
 import com.tfg.backend.domain.User;
 import com.tfg.backend.domain.UserMedal;
 import com.tfg.backend.persistance.UserMedalRepository;
+import com.tfg.backend.service.dto.UserDTO;
+import com.tfg.backend.service.dto.UserMedalDTO;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserMedalService {
@@ -43,7 +47,17 @@ public class UserMedalService {
         saveMedalIfNotExists(user, EMedal.PREMIUM_USER);
     }
 
-    public void checkDanceExpertMedal(User user) {
-        saveMedalIfNotExists(user, EMedal.DANCE_EXPERT);
+    public List<UserMedalDTO> getMedalsByUser(UserDTO user) {
+        return userMedalRepository.findByUserId(user.getId())
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    private UserMedalDTO toDTO(UserMedal userMedal) {
+        return new UserMedalDTO(
+                userMedal.getId(),
+                userMedal.getMedal().name()
+        );
     }
 }
