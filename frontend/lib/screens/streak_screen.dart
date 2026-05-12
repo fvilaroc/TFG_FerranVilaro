@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../models/user_medal.dart';
 import '../models/user_profile.dart';
+import '../services/medal_service.dart';
 import '../services/user_service.dart';
 
 class StreakScreen extends StatefulWidget {
@@ -17,10 +19,21 @@ class StreakScreen extends StatefulWidget {
 
 class _StreakScreenState extends State<StreakScreen> {
   final UserService _userService = UserService();
+  final MedalService _medalService = MedalService();
 
   UserProfile? _profile;
+  List<UserMedal> _medals = [];
+
   bool _isLoading = true;
   String? _errorMessage;
+
+  final List<String> _allMedals = const [
+    'FIRST_LOGIN',
+    'STREAK_5',
+    'STREAK_10',
+    'STREAK_25',
+    'PREMIUM_USER',
+  ];
 
   @override
   void initState() {
@@ -36,11 +49,13 @@ class _StreakScreenState extends State<StreakScreen> {
 
     try {
       final profile = await _userService.getMyProfile(widget.token);
+      final medals = await _medalService.getMyMedals(widget.token);
 
       if (!mounted) return;
 
       setState(() {
         _profile = profile;
+        _medals = medals;
         _isLoading = false;
       });
     } catch (e) {
@@ -50,6 +65,78 @@ class _StreakScreenState extends State<StreakScreen> {
         _errorMessage = 'No se pudo cargar tu racha.';
         _isLoading = false;
       });
+    }
+  }
+
+  bool _hasMedal(String medal) {
+    return _medals.any((m) => m.medal == medal);
+  }
+
+  String _getMedalTitle(String medal) {
+    switch (medal) {
+      case 'FIRST_LOGIN':
+        return 'Primer inicio';
+      case 'STREAK_5':
+        return 'Racha de 5 días';
+      case 'STREAK_10':
+        return 'Racha de 10 días';
+      case 'STREAK_25':
+        return 'Racha de 25 días';
+      case 'PREMIUM_USER':
+        return 'Usuario Premium';
+      default:
+        return medal;
+    }
+  }
+
+  String _getMedalDescription(String medal) {
+    switch (medal) {
+      case 'FIRST_LOGIN':
+        return 'Has iniciado sesión por primera vez.';
+      case 'STREAK_5':
+        return 'Has llegado a 5 días de racha.';
+      case 'STREAK_10':
+        return 'Has llegado a 10 días de racha.';
+      case 'STREAK_25':
+        return 'Has alcanzado una racha legendaria.';
+      case 'PREMIUM_USER':
+        return 'Has mejorado tu cuenta a Premium.';
+      default:
+        return 'Medalla desbloqueable.';
+    }
+  }
+
+  IconData _getMedalIcon(String medal) {
+    switch (medal) {
+      case 'FIRST_LOGIN':
+        return Icons.login_rounded;
+      case 'STREAK_5':
+        return Icons.local_fire_department_rounded;
+      case 'STREAK_10':
+        return Icons.whatshot_rounded;
+      case 'STREAK_25':
+        return Icons.workspace_premium_rounded;
+      case 'PREMIUM_USER':
+        return Icons.diamond_rounded;
+      default:
+        return Icons.emoji_events_rounded;
+    }
+  }
+
+  Color _getMedalColor(String medal) {
+    switch (medal) {
+      case 'FIRST_LOGIN':
+        return const Color(0xFF2563EB);
+      case 'STREAK_5':
+        return const Color(0xFFEF4444);
+      case 'STREAK_10':
+        return const Color(0xFF8B5CF6);
+      case 'STREAK_25':
+        return const Color(0xFFF59E0B);
+      case 'PREMIUM_USER':
+        return const Color(0xFF10B981);
+      default:
+        return const Color(0xFF7C3AED);
     }
   }
 
@@ -96,7 +183,6 @@ class _StreakScreenState extends State<StreakScreen> {
   }
 
   Widget _buildHeader(int streak) {
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(22, 22, 22, 24),
@@ -250,10 +336,10 @@ class _StreakScreenState extends State<StreakScreen> {
           const SizedBox(height: 8),
           Text(
             streak <= 0
-              ? 'Entra mañana para empezar a construir una racha.'
-              : streak >= 25
-                ? 'Has alcanzado el nivel máximo de racha. Sigue así, eres una auténtica leyenda.'
-                : 'Te faltan $daysToNextColor día${daysToNextColor == 1 ? '' : 's'} para alcanzar el siguiente cambio de color.',
+                ? 'Entra mañana para empezar a construir una racha.'
+                : streak >= 25
+                    ? 'Has alcanzado el nivel máximo de racha. Sigue así, eres una auténtica leyenda.'
+                    : 'Te faltan $daysToNextColor día${daysToNextColor == 1 ? '' : 's'} para alcanzar el siguiente cambio de color.',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 14.5,
@@ -261,6 +347,156 @@ class _StreakScreenState extends State<StreakScreen> {
               color: Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMedalsCard() {
+    final unlockedCount = _medals.length;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: const Color(0xFFE5E7EB),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.emoji_events_rounded,
+                color: Color(0xFFF59E0B),
+                size: 28,
+              ),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Text(
+                  'Mis medallas',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF111827),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF7C3AED).withOpacity(0.10),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  '$unlockedCount/${_allMedals.length}',
+                  style: const TextStyle(
+                    color: Color(0xFF7C3AED),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Desbloquea medallas manteniendo tu racha y usando la aplicación.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF6B7280),
+              height: 1.45,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Column(
+            children: _allMedals.map((medal) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildMedalTile(medal),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMedalTile(String medal) {
+    final unlocked = _hasMedal(medal);
+    final color = unlocked ? _getMedalColor(medal) : const Color(0xFF9CA3AF);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: unlocked ? color.withOpacity(0.10) : const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: unlocked ? color.withOpacity(0.28) : const Color(0xFFE5E7EB),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 54,
+            height: 54,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: unlocked ? color.withOpacity(0.14) : const Color(0xFFE5E7EB),
+            ),
+            child: Icon(
+              _getMedalIcon(medal),
+              color: color,
+              size: 29,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _getMedalTitle(medal),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: unlocked ? const Color(0xFF111827) : const Color(0xFF6B7280),
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  unlocked
+                      ? _getMedalDescription(medal)
+                      : 'Medalla todavía no desbloqueada.',
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    height: 1.35,
+                    color: unlocked ? const Color(0xFF374151) : const Color(0xFF9CA3AF),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Icon(
+            unlocked ? Icons.check_circle_rounded : Icons.lock_rounded,
+            color: color,
+            size: 24,
           ),
         ],
       ),
@@ -277,9 +513,9 @@ class _StreakScreenState extends State<StreakScreen> {
           color: const Color(0xFFE5E7EB),
         ),
       ),
-      child: Row(
+      child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           Icon(
             Icons.lightbulb_rounded,
             color: Color(0xFFF59E0B),
@@ -314,6 +550,8 @@ class _StreakScreenState extends State<StreakScreen> {
           _buildHeader(streak),
           const SizedBox(height: 22),
           _buildFlameCard(streak),
+          const SizedBox(height: 22),
+          _buildMedalsCard(),
           const SizedBox(height: 22),
           _buildInfoCard(streak),
         ],

@@ -32,15 +32,10 @@ public class UserMedalService {
     }
 
     public void checkStreakMedals(User user) {
-        if (user.getStreak() >= 1) {
-            saveMedalIfNotExists(user, EMedal.FIRST_LOGIN);
-        } else if (user.getStreak() >= 5) {
-            saveMedalIfNotExists(user, EMedal.STREAK_5);
-        } else if (user.getStreak() >= 10) {
-            saveMedalIfNotExists(user, EMedal.STREAK_10);
-        } else if (user.getStreak() >= 25) {
-            saveMedalIfNotExists(user, EMedal.STREAK_25);
-        }
+        if (user.getStreak() >= 1) saveMedalIfNotExists(user, EMedal.FIRST_LOGIN);
+        if (user.getStreak() >= 5) saveMedalIfNotExists(user, EMedal.STREAK_5);
+        if (user.getStreak() >= 10) saveMedalIfNotExists(user, EMedal.STREAK_10);
+        if (user.getStreak() >= 25) saveMedalIfNotExists(user, EMedal.STREAK_25);
     }
 
     public void checkPremiumMedal(User user) {
