@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_medal")
+@Table(name = "user_medal",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "medal"})
+        })
 @Getter
 @Setter
 public class UserMedal {
