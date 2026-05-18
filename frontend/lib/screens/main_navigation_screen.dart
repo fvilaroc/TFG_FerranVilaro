@@ -34,6 +34,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     setState(() => _selectedIndex = 3);
   }
 
+  void _goToHome() {
+    setState(() => _selectedIndex = 0);
+  }
+
   final List<String> _titles = [
     'Inicio',
     'Bailes',
@@ -58,7 +62,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       ),
       dances.DancesScreen(token: currentToken),
       streak.StreakScreen(token: currentToken),
-      ranking.RankingScreen(token: currentToken),
+      ranking.RankingScreen(
+        token: currentToken,
+        onGoHome: _goToHome,
+      ),
       profile.ProfileScreen(
         username: currentUsername,
         token: currentToken,

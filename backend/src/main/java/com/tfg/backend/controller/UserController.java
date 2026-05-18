@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PatchMapping("/upgrade")
-    public UserDTO upgradeToPremium(Authentication authentication) {
+    public UpdateUsernameResponseDTO upgradeToPremium(Authentication authentication) {
         return userService.updateUserToPremium(authentication.getName());
     }
 

@@ -83,7 +83,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
     }
 
-    public UserDTO updateUserToPremium(String username) {
+    public UpdateUsernameResponseDTO updateUserToPremium(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
@@ -99,7 +99,7 @@ public class UserService {
 
         userMedalService.checkPremiumMedal(user);
 
-        return toDTO(user);
+        return new UpdateUsernameResponseDTO(toDTO(user), jwtService.generateNewToken(user));
     }
 
     public void checkAndUpdatePremiumStatus(User user) {

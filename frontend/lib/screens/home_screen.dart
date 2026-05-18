@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
-import '../core/config/app_config.dart';
 import '../models/user_profile.dart';
+import '../providers/auth_provider.dart';
 import '../services/user_service.dart';
 import 'quiz_screen.dart';
 
@@ -36,6 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadProfile();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.token != widget.token) {
+      _loadProfile();
+    }
   }
 
   Future<void> _loadProfile() async {
@@ -101,62 +110,61 @@ class _HomeScreenState extends State<HomeScreen> {
     _goToQuizScreen();
   }
 
-  void _goToQuizScreen() {
+  void _goToQuizScreen({String? token}) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => QuizScreen(token: widget.token),
+        builder: (_) => QuizScreen(
+          token: token ?? widget.token,
+        ),
       ),
     );
   }
 
-  Future<void> _upgradeAccount() async {
-    if (_isUpgrading) return;
+  Future<String?> _upgradeAccount() async {
+    if (_isUpgrading) return null;
+
+    final authProvider = context.read<AuthProvider>();
 
     setState(() {
       _isUpgrading = true;
     });
 
     try {
-      final response = await http.patch(
-        Uri.parse('${AppConfig.baseUrl}/users/upgrade'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${widget.token}',
-        },
+      final response = await _userService.upgradeAccount(
+        token: widget.token,
       );
 
-      if (!mounted) return;
+      await authProvider.updateSession(
+        token: response.token,
+        username: response.user.username,
+      );
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        await _loadProfile();
+      if (!mounted) return null;
 
-        if (!mounted) return;
-
-        Navigator.of(context).pop();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tu cuenta se ha mejorado correctamente.'),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No se pudo mejorar la cuenta: ${response.body}'),
-          ),
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
+      setState(() {
+        _profile = response.user;
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Ha ocurrido un error al mejorar la cuenta.'),
+          content: Text('Tu cuenta se ha mejorado correctamente.'),
         ),
       );
+
+      return response.token;
+    } catch (e) {
+      if (!mounted) return null;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No se pudo mejorar la cuenta: $e'),
+        ),
+      );
+
+      return null;
     } finally {
-      if (!mounted) return;
+      if (!mounted) return null;
 
       setState(() {
         _isUpgrading = false;
@@ -165,77 +173,102 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showPremiumDialog() {
+    bool isDialogUpgrading = false;
+
     showDialog(
       context: context,
-      barrierDismissible: !_isUpgrading,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(22),
-          ),
-          title: Row(
-            children: const [
-              Icon(Icons.lock_outline, color: Color(0xFF7C3AED)),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Contenido PREMIUM',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(22),
               ),
-            ],
-          ),
-          content: const Text(
-            'La pantalla de tests es solo para usuarios PREMIUM. '
-            'Si quieres acceder a esta funcionalidad, debes mejorar tu cuenta.',
-            style: TextStyle(height: 1.4),
-          ),
-          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          actions: [
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _isUpgrading
-                    ? null
-                    : () {
-                        Navigator.of(context).pop();
-                      },
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+              title: const Row(
+                children: [
+                  Icon(Icons.lock_outline, color: Color(0xFF7C3AED)),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Contenido PREMIUM',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              content: const Text(
+                'La pantalla de tests es solo para usuarios PREMIUM. '
+                'Si quieres acceder a esta funcionalidad, debes mejorar tu cuenta.',
+                style: TextStyle(height: 1.4),
+              ),
+              actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              actions: [
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: isDialogUpgrading
+                        ? null
+                        : () {
+                            Navigator.of(dialogContext).pop();
+                          },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text('Volver a inicio'),
                   ),
                 ),
-                child: const Text('Volver a inicio'),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isUpgrading ? null : _upgradeAccount,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C3AED),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: isDialogUpgrading
+                        ? null
+                        : () async {
+                            setDialogState(() {
+                              isDialogUpgrading = true;
+                            });
+
+                            final newToken = await _upgradeAccount();
+
+                            if (!mounted) return;
+
+                            if (newToken != null && newToken.isNotEmpty) {
+                              Navigator.of(dialogContext).pop();
+                              _goToQuizScreen(token: newToken);
+                            } else {
+                              setDialogState(() {
+                                isDialogUpgrading = false;
+                              });
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7C3AED),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: isDialogUpgrading
+                        ? const SizedBox(
+                            height: 22,
+                            width: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.4,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text('Mejorar cuenta'),
                   ),
                 ),
-                child: _isUpgrading
-                    ? const SizedBox(
-                        height: 22,
-                        width: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.4,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text('Mejorar cuenta'),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );

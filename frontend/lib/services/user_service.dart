@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
 import '../core/config/app_config.dart';
 import '../models/user_profile.dart';
 import '../models/update_profile_response.dart';
@@ -44,44 +45,62 @@ class UserService {
   }
 
   Future<void> updateEmail({
-      required String token,
-      required String newEmail,
-    }) async {
-      final response = await http.patch(
-        Uri.parse('${AppConfig.baseUrl}/users/updateEmail'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'newEmail': newEmail,
-        }),
-      );
+    required String token,
+    required String newEmail,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('${AppConfig.baseUrl}/users/updateEmail'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'newEmail': newEmail,
+      }),
+    );
 
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception('Error al modificar email: ${response.body}');
-      }
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Error al modificar email: ${response.body}');
     }
+  }
 
-    Future<void> updatePassword({
-      required String token,
-      required String currentPassword,
-      required String newPassword,
-    }) async {
-      final response = await http.patch(
-        Uri.parse('${AppConfig.baseUrl}/users/updatePassword'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'currentPassword': currentPassword,
-          'newPassword': newPassword,
-        }),
-      );
+  Future<void> updatePassword({
+    required String token,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('${AppConfig.baseUrl}/users/updatePassword'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      }),
+    );
 
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception('Error al modificar contraseña: ${response.body}');
-      }
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Error al modificar contraseña: ${response.body}');
     }
+  }
+
+  Future<UpdateProfileResponse> upgradeAccount({
+    required String token,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('${AppConfig.baseUrl}/users/upgrade'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return UpdateProfileResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al mejorar cuenta: ${response.body}');
+    }
+  }
 }
