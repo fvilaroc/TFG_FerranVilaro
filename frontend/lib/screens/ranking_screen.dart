@@ -237,7 +237,7 @@ class _RankingScreenState extends State<RankingScreen> {
       ),
     );
   }
-  
+
   Widget _buildRoleChip() {
     final bool premium = _canSeeDanceRanking;
 
