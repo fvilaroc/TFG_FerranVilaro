@@ -57,4 +57,21 @@ class DanceService {
       throw Exception('Error al añadir el baile: ${response.body}');
     }
   }
+
+  Future<void> deleteDance({
+    required String token,
+    required int danceId,
+  }) async {
+    final response = await http.delete(
+      Uri.parse('${AppConfig.baseUrl}/dances/delete/$danceId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Error al borrar el baile: ${response.body}');
+    }
+  }
 }

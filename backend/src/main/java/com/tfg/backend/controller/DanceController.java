@@ -24,7 +24,7 @@ public class DanceController {
         danceService.saveDance(dance);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public void deleteDance(@PathVariable Long id) {
         danceService.deleteDanceById(id);

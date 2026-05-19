@@ -50,7 +50,8 @@ public class DanceService {
                 dance.getHistory(),
                 dance.getOrigin(),
                 dance.getClothing(),
-                dance.getMusicCharacteristics()
+                dance.getMusicCharacteristics(),
+                dance.getDanceSteps()
         );
     }
 }

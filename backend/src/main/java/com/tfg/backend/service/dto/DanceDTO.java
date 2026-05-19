@@ -17,10 +17,11 @@ public class DanceDTO {
     private String origin;
     private String clothing;
     private String musicCharacteristics;
+    private String danceSteps;
 
     public DanceDTO() {}
 
-    public DanceDTO(Long id, String name, String region, String description, String videoUrl, String history, String origin, String clothing, String musicCharacteristics) {
+    public DanceDTO(Long id, String name, String region, String description, String videoUrl, String history, String origin, String clothing, String musicCharacteristics, String danceSteps) {
         this.id = id;
         this.name = name;
         this.region = region;
@@ -30,6 +31,7 @@ public class DanceDTO {
         this.origin = origin;
         this.clothing = clothing;
         this.musicCharacteristics = musicCharacteristics;
+        this.danceSteps = danceSteps;
     }
 
 }

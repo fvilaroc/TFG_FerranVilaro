@@ -8,6 +8,7 @@ class Dance {
   final String origin;
   final String clothing;
   final String musicCharacteristics;
+  final String danceSteps;
 
   Dance({
     required this.id,
@@ -18,7 +19,8 @@ class Dance {
     required this.history,
     required this.origin,
     required this.clothing,
-    required this.musicCharacteristics
+    required this.musicCharacteristics,
+    required this.danceSteps
   });
 
   factory Dance.fromJson(Map<String, dynamic> json) {
@@ -31,7 +33,8 @@ class Dance {
       history: json['history'] ?? '',
       origin: json['origin'] ?? '',
       clothing: json['clothing'] ?? '',
-      musicCharacteristics: json['musicCharacteristics'] ?? ''
+      musicCharacteristics: json['musicCharacteristics'] ?? '',
+      danceSteps: json['danceSteps'] ?? ''
     );
   }
 }

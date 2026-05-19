@@ -35,6 +35,8 @@ public class Dance {
     private String clothing;
     @Lob
     private String musicCharacteristics;
+    @Lob
+    private String danceSteps;
 
     @OneToMany(mappedBy = "dance")
     private List<UserDanceProgress> progresses;

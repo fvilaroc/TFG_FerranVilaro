@@ -28,6 +28,8 @@ class _DancesScreenState extends State<DancesScreen> {
   UserProfile? _profile;
   bool _isLoadingProfile = true;
 
+  final Set<int> _deletingDanceIds = {};
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +37,21 @@ class _DancesScreenState extends State<DancesScreen> {
     _loadProfile();
   }
 
+  @override
+  void didUpdateWidget(covariant DancesScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.token != widget.token) {
+      _dancesFuture = _danceService.getAllDances(widget.token);
+      _loadProfile();
+    }
+  }
+
   Future<void> _loadProfile() async {
+    setState(() {
+      _isLoadingProfile = true;
+    });
+
     try {
       final profile = await _userService.getMyProfile(widget.token);
 
@@ -60,9 +76,13 @@ class _DancesScreenState extends State<DancesScreen> {
   }
 
   Future<void> _refreshDances() async {
+    final future = _danceService.getAllDances(widget.token);
+
     setState(() {
-      _dancesFuture = _danceService.getAllDances(widget.token);
+      _dancesFuture = future;
     });
+
+    await future;
   }
 
   Future<void> _goToAddDance() async {
@@ -74,7 +94,7 @@ class _DancesScreenState extends State<DancesScreen> {
     );
 
     if (created == true) {
-      _refreshDances();
+      await _refreshDances();
     }
   }
 
@@ -88,6 +108,111 @@ class _DancesScreenState extends State<DancesScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDeleteDance(Dance dance) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          title: const Row(
+            children: [
+              Icon(
+                Icons.delete_outline_rounded,
+                color: Color(0xFFEF4444),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Borrar baile',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            '¿Seguro que quieres borrar "${dance.name}"? Esta acción no se puede deshacer.',
+            style: const TextStyle(
+              height: 1.4,
+              color: Color(0xFF374151),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              icon: const Icon(Icons.delete_rounded),
+              label: const Text('Borrar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFEF4444),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete == true) {
+      await _deleteDance(dance);
+    }
+  }
+
+  Future<void> _deleteDance(Dance dance) async {
+    if (_deletingDanceIds.contains(dance.id)) return;
+
+    setState(() {
+      _deletingDanceIds.add(dance.id);
+    });
+
+    try {
+      await _danceService.deleteDance(
+        token: widget.token,
+        danceId: dance.id,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Baile "${dance.name}" borrado correctamente.'),
+        ),
+      );
+
+      await _refreshDances();
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No se pudo borrar el baile: $e'),
+        ),
+      );
+    } finally {
+      if (!mounted) return;
+
+      setState(() {
+        _deletingDanceIds.remove(dance.id);
+      });
+    }
   }
 
   IconData _getDanceIcon(int index) {
@@ -213,90 +338,164 @@ class _DancesScreenState extends State<DancesScreen> {
     required int index,
   }) {
     final gradient = _getCardGradient(index);
+    final isDeleting = _deletingDanceIds.contains(dance.id);
 
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _goToDanceInfo(dance),
-        borderRadius: BorderRadius.circular(26),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            gradient: LinearGradient(
-              colors: gradient,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: gradient.last.withOpacity(0.23),
-                blurRadius: 18,
-                offset: const Offset(0, 10),
-              ),
-            ],
+      borderRadius: BorderRadius.circular(26),
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(26),
+          gradient: LinearGradient(
+            colors: gradient,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Row(
-              children: [
-                Container(
-                  height: 62,
-                  width: 62,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.18),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Icon(
-                    _getDanceIcon(index),
-                    color: Colors.white,
-                    size: 30,
-                  ),
+          boxShadow: [
+            BoxShadow(
+              color: gradient.last.withOpacity(0.23),
+              blurRadius: 18,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            InkWell(
+              onTap: () => _goToDanceInfo(dance),
+              borderRadius: BorderRadius.vertical(
+                top: const Radius.circular(26),
+                bottom: Radius.circular(_isAdmin ? 0 : 26),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 62,
+                      width: 62,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.18),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Icon(
+                        _getDanceIcon(index),
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            dance.name,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 19,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            'Región: ${dance.region}',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.94),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 7),
+                          Text(
+                            dance.description,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.88),
+                              fontSize: 13.5,
+                              height: 1.35,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        dance.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 19,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        'Región: ${dance.region}',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.94),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 7),
-                      Text(
-                        dance.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              ),
+            ),
+
+            if (!_isLoadingProfile && _isAdmin) ...[
+              Container(
+                height: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 18),
+                color: Colors.white.withOpacity(0.18),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Acciones de administrador',
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.88),
-                          fontSize: 13.5,
-                          height: 1.35,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: isDeleting
+                          ? null
+                          : () {
+                              _confirmDeleteDance(dance);
+                            },
+                      icon: isDeleting
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.delete_outline_rounded,
+                              size: 18,
+                            ),
+                      label: Text(isDeleting ? 'Borrando...' : 'Borrar'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFFEF4444),
+                        disabledBackgroundColor: Colors.white.withOpacity(0.55),
+                        disabledForegroundColor:
+                            const Color(0xFFEF4444).withOpacity(0.65),
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          ],
         ),
       ),
     );
