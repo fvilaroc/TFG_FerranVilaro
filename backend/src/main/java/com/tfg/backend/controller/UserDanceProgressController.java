@@ -33,4 +33,18 @@ public class UserDanceProgressController {
         User user = userService.getUserEntityByUsername(authentication.getName());
         return userDanceProgressService.getAllProgressByUser(user.getId());
     }
+
+    @GetMapping("/{danceId}/documentationRead")
+    public boolean isDocumentationRead(Authentication authentication,
+                                   @PathVariable Long danceId) {
+        User user = userService.getUserEntityByUsername(authentication.getName());
+        return userDanceProgressService.hasReadDocumentation(user.getId(), danceId);
+    }
+
+    @PatchMapping("/{danceId}/markDocumentationRead")
+    public void markDocumentationRead(Authentication authentication,
+                                     @PathVariable Long danceId) {
+        User user = userService.getUserEntityByUsername(authentication.getName());
+        userDanceProgressService.markDocumentationAsRead(user.getId(), danceId);
+    }
 }
