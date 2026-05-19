@@ -8,6 +8,7 @@ import com.tfg.backend.persistance.DanceRepository;
 import com.tfg.backend.persistance.UserDanceProgressRepository;
 import com.tfg.backend.persistance.UserRepository;
 import com.tfg.backend.service.dto.UserDanceProgressDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,6 +65,55 @@ public class UserDanceProgressService {
 
         userRepository.save(user);
         userDanceProgressRepository.save(progress);
+    }
+
+    @Transactional
+    public void markDocumentationAsRead(Long userId, Long danceId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        Dance dance = danceRepository.findById(danceId)
+                .orElseThrow(() -> new RuntimeException("Dance not found with id: " + danceId));
+
+        UserDanceProgress progress = userDanceProgressRepository.findByUserIdAndDanceId(userId, danceId)
+                .orElseGet(() -> {
+                    UserDanceProgress newProgress = new UserDanceProgress();
+                    newProgress.setUser(user);
+                    newProgress.setDance(dance);
+                    newProgress.setPoints(0);
+                    newProgress.setDocumentationRead(false);
+                    return newProgress;
+                });
+
+        if(!progress.isDocumentationRead()) {
+            progress.setDocumentationRead(true);
+            progress.setPoints(progress.getPoints() + 20); // recompensa por leer la documentación
+            user.setPoints(user.getPoints() + 20);
+            userRepository.save(user);
+        }
+
+        userDanceProgressRepository.save(progress);
+    }
+
+    public boolean hasReadDocumentation(Long userId, Long danceId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        Dance dance = danceRepository.findById(danceId)
+                .orElseThrow(() -> new RuntimeException("Dance not found with id: " + danceId));
+
+        UserDanceProgress progress = userDanceProgressRepository.findByUserIdAndDanceId(userId, danceId)
+                .orElseGet(() -> {
+                    UserDanceProgress newProgress = new UserDanceProgress();
+                    newProgress.setUser(user);
+                    newProgress.setDance(dance);
+                    newProgress.setPoints(0);
+                    newProgress.setDocumentationRead(false);
+                    userDanceProgressRepository.save(newProgress);
+                    return newProgress;
+                });
+
+        return progress.isDocumentationRead();
     }
 
     private UserDanceProgressDTO toDTO(UserDanceProgress progress) {

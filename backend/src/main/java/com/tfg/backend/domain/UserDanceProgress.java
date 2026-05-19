@@ -26,6 +26,9 @@ public class UserDanceProgress {
 
     private int points = 0; // puntos de progreso en el baile
 
+    @Column(nullable = false)
+    private boolean documentationRead = false;
+
     public UserDanceProgress() {}
 
     public UserDanceProgress(User user, Dance dance, int points) {
