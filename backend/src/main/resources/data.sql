@@ -11,10 +11,10 @@ INSERT INTO user_tfg (
     email,
     username,
     password,
-    dateOfBirth,
-    registrationDate,
+    date_of_birth,
+    registration_date,
     points,
-    lastLogin,
+    last_login,
     streak,
     roles
 )
@@ -36,10 +36,10 @@ INSERT INTO user_tfg (
     email,
     username,
     password,
-    dateOfBirth,
-    registrationDate,
+    date_of_birth,
+    registration_date,
     points,
-    lastLogin,
+    last_login,
     streak,
     roles
 )
@@ -61,10 +61,10 @@ INSERT INTO user_tfg (
     email,
     username,
     password,
-    dateOfBirth,
-    registrationDate,
+    date_of_birth,
+    registration_date,
     points,
-    lastLogin,
+    last_login,
     streak,
     roles
 )
@@ -94,9 +94,9 @@ INSERT INTO dances (
     description,
     history,
     clothing,
-    musicCharacteristics,
-    danceSteps,
-    videoUrl
+    music_characteristics,
+    dance_steps,
+    video_url
 )
 SELECT
     'Sevillanas',
@@ -116,7 +116,7 @@ INSERT INTO dances (
     name,
     region,
     description,
-    videoUrl
+    video_url
 )
 SELECT
     'Muñeira',
@@ -131,7 +131,7 @@ INSERT INTO dances (
     name,
     region,
     description,
-    videoUrl
+    video_url
 )
 SELECT
     'Jota',
@@ -147,13 +147,13 @@ WHERE NOT EXISTS (
 -- PREGUNTES DE TEST
 -- =========================
 
-INSERT INTO question_lab (
+INSERT INTO questions (
     question,
-    correctAnswer,
-    optionA,
-    optionB,
-    optionC,
-    optionD,
+    correct_answer,
+    optiona,
+    optionb,
+    optionc,
+    optiond,
     points,
     difficulty,
     dance_id
@@ -171,17 +171,17 @@ SELECT
 FROM dances d
 WHERE d.name = 'Sevillanas'
 AND NOT EXISTS (
-    SELECT 1 FROM question_lab
+    SELECT 1 FROM questions
     WHERE question = '¿De que comunidad autónoma son típicas las sevillanas?'
 );
 
-INSERT INTO question_lab (
+INSERT INTO questions (
     question,
-    correctAnswer,
-    optionA,
-    optionB,
-    optionC,
-    optionD,
+    correct_answer,
+    optiona,
+    optionb,
+    optionc,
+    optiond,
     points,
     difficulty,
     dance_id
@@ -199,17 +199,17 @@ SELECT
 FROM dances d
 WHERE d.name = 'Muñeira'
 AND NOT EXISTS (
-    SELECT 1 FROM question_lab
+    SELECT 1 FROM questions
     WHERE question = '¿Qué instrumento es muy característico en la música tradicional gallega?'
 );
 
-INSERT INTO question_lab (
+INSERT INTO questions (
     question,
-    correctAnswer,
-    optionA,
-    optionB,
-    optionC,
-    optionD,
+    correct_answer,
+    optiona,
+    optionb,
+    optionc,
+    optiond,
     points,
     difficulty,
     dance_id
@@ -227,7 +227,7 @@ SELECT
 FROM dances d
 WHERE d.name = 'Jota'
 AND NOT EXISTS (
-    SELECT 1 FROM question_lab
+    SELECT 1 FROM questions
     WHERE question = '¿De que comunidad autónoma es especialmente representativa la jota aragonesa?'
 );
 
@@ -239,12 +239,14 @@ AND NOT EXISTS (
 INSERT INTO user_dance_progress (
     user_id,
     dance_id,
-    points
+    points,
+    documentation_read
 )
 SELECT
     u.id,
     d.id,
-    100
+    100,
+    false
 FROM user_tfg u, dances d
 WHERE u.email = 'premium@test.com'
 AND d.name = 'Sevillanas'
@@ -258,12 +260,14 @@ AND NOT EXISTS (
 INSERT INTO user_dance_progress (
     user_id,
     dance_id,
-    points
+    points,
+    documentation_read
 )
 SELECT
     u.id,
     d.id,
-    80
+    80,
+    true
 FROM user_tfg u, dances d
 WHERE u.email = 'premium@test.com'
 AND d.name = 'Muñeira'
@@ -277,12 +281,14 @@ AND NOT EXISTS (
 INSERT INTO user_dance_progress (
     user_id,
     dance_id,
-    points
+    points,
+    documentation_read
 )
 SELECT
     u.id,
     d.id,
-    200
+    200,
+    true
 FROM user_tfg u, dances d
 WHERE u.email = 'admin@test.com'
 AND d.name = 'Jota'

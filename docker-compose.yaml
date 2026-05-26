@@ -1,16 +1,16 @@
 services:
   db:
     image: postgres:16
-    container_name: tfg-postgres
+    container_name: tfg-postgres-ferranvilaro
     restart: unless-stopped
     environment:
       POSTGRES_DB: tfg_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - tfg_postgres_data:/var/lib/postgresql/data
+      - tfg_postgres_ferranvilaro_data:/var/lib/postgresql/data
 
 volumes:
-  tfg_postgres_data:
+  tfg_postgres_ferranvilaro_data:
