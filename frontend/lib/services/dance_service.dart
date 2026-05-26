@@ -32,6 +32,7 @@ class DanceService {
     required String origin,
     required String clothing,
     required String music,
+    required String danceSteps,
   }) async {
     final response = await http.post(
       Uri.parse('${AppConfig.baseUrl}/dances/save'),
@@ -48,6 +49,7 @@ class DanceService {
         'origin': origin,
         'clothing': clothing,
         'music': music,
+        'danceSteps': danceSteps,
       }),
     );
 

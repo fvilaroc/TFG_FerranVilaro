@@ -26,6 +26,7 @@ class _AddDanceScreenState extends State<AddDanceScreen> {
   final TextEditingController _originController = TextEditingController();
   final TextEditingController _clothingController = TextEditingController();
   final TextEditingController _musicController = TextEditingController();
+  final TextEditingController _danceStepsController = TextEditingController();
 
   bool _isSaving = false;
 
@@ -39,6 +40,7 @@ class _AddDanceScreenState extends State<AddDanceScreen> {
     _originController.dispose();
     _clothingController.dispose();
     _musicController.dispose();
+    _danceStepsController.dispose();
     super.dispose();
   }
 
@@ -60,6 +62,7 @@ class _AddDanceScreenState extends State<AddDanceScreen> {
         origin: _originController.text.trim(),
         clothing: _clothingController.text.trim(),
         music: _musicController.text.trim(),
+        danceSteps: _danceStepsController.text.trim(),
       );
 
       if (!mounted) return;
@@ -260,6 +263,13 @@ class _AddDanceScreenState extends State<AddDanceScreen> {
               label: 'Música característica',
               icon: Icons.library_music_rounded,
               maxLines: 3,
+            ),
+            const SizedBox(height: 14),
+            _buildTextField(
+              controller: _danceStepsController,
+              label: 'Pasos de baile',
+              icon: Icons.directions_walk_rounded,
+              maxLines: 4,
             ),
             const SizedBox(height: 22),
             SizedBox(

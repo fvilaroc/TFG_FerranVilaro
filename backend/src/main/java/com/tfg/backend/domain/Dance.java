@@ -27,15 +27,15 @@ public class Dance {
 
     private String videoUrl;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String history;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String origin;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String clothing;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String musicCharacteristics;
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String danceSteps;
 
     @OneToMany(mappedBy = "dance")
